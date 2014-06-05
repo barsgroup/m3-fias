@@ -24,6 +24,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         });
         place_store.baseParams['levels'] = [1, 4, 6];
 
+        debugger;
         if (params.place_record != '' && params.place_record != undefined) {
             var rec = Ext.util.JSON.decode(params.place_record);
             place_store.loadData({
@@ -153,7 +154,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     valueField: 'house_number',
                     mode: 'remote',
                     hiddenName: params.house_field_name,
-                    valueNotFoundText: '',
+                    valueNotFoundText: params.house_value,
                     invalidClass: params.invalid_class
                 });
 
@@ -161,6 +162,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     name: 'house_guid',
                     xtype: 'hiddenfield'
                 });
+                this.house_guid.setValue(params.house_guid);
 
                 if (params.use_corps) {
                     this.corps = new Ext.form.TextField({
@@ -507,8 +509,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             'before_query_place');
     },
     getNewAddr: function () {
-        var place_id;
-        //debugger;
+        var place_id;        
         if (this.place != undefined) {
             place_id = this.place.getValue();
         }
@@ -631,7 +632,6 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         this.fireEvent('change_house', this, this.house.getValue());
         house_num = this.house.getValue();
         house = this.house.getStore().data.get(house_num);
-        debugger;
         if(house != undefined){
             if(house.data.postal_code){
                 this.zipcode.setValue(house.data.postal_code);
