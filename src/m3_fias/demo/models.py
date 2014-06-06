@@ -5,6 +5,7 @@ from objectpack.models import VirtualModel
 
 residencies = {}
 
+
 class Residence(VirtualModel):
 
     @classmethod
@@ -23,13 +24,17 @@ class Residence(VirtualModel):
 
         self.__dict__.update(data or {})
 
+    @classmethod
+    def delete_by_id(self, obj_id):
+        residencies.pop(obj_id)
+
     def save(self):
         if not getattr(self, 'id', None):
             self.id = len(residencies) + 1
-
         residencies[self.id] = self.__dict__.copy()
-        print residencies[self.id]
         
+    def delete(self):
+        residencies.pop(self.id)
 
     def __unicode__(self):
         return u'{0} ({1})'.format(self.description, self.addr)

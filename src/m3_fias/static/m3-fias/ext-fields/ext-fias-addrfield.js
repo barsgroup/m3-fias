@@ -24,7 +24,6 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         });
         place_store.baseParams['levels'] = [1, 4, 6];
 
-        debugger;
         if (params.place_record != '' && params.place_record != undefined) {
             var rec = Ext.util.JSON.decode(params.place_record);
             place_store.loadData({
@@ -92,6 +91,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     field: 'name'
                 }
             });
+
             street_store.baseParams['levels'] = 7;
             if (params.street_record != '' && params.street_record != undefined) {
                 var rec = Ext.util.JSON.decode(params.street_record);
@@ -119,7 +119,8 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 valueNotFoundText: '',
                 invalidClass: params.invalid_class
             });
-            this.street.setValue(params.street_value);
+            this.street.setValue(params.street_value);            
+            this.street.getStore().baseParams.boundary = this.place.value;
 
             if (params.level > 2) {
                 var house_store = new Ext.data.JsonStore({
@@ -136,6 +137,17 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                         field: 'house_number'
                     }
                 });
+
+                if(params.house_value != undefined){
+                    house_store.loadData({
+                        total: 1, 
+                        rows: [{
+                            house_number: params.house_value, 
+                            house_guid: '', 
+                            postal_code: ''
+                        }]
+                    });
+                }
 
                 this.house = new Ext.form.ComboBox({
                     name: params.house_field_name,
@@ -154,9 +166,10 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     valueField: 'house_number',
                     mode: 'remote',
                     hiddenName: params.house_field_name,
-                    valueNotFoundText: params.house_value,
                     invalidClass: params.invalid_class
                 });
+                this.house.setValue(params.house_value);
+                this.house.getStore().baseParams.street = this.street.value;
 
                 this.house_guid = new Ext.form.Hidden({
                     name: 'house_guid',
@@ -557,10 +570,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         /* Формирование текстового представления полного адреса */
 
         var addr_text = '';
+
         if (street != undefined) {
-            addr_text = place.name + ', ' + street.name;
+            addr_text = place.shortname + '. ' + place.formal_name + ', ' + street.shortname + '. ' + street.formal_name;
         } else {
-            addr_text = place.name;
+            addr_text = place.shortname + '. ' + place.formal_name;
         }
         // проставим индекс
         if (zipcode != '') {

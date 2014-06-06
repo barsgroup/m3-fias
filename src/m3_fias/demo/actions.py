@@ -15,43 +15,6 @@ from objectpack import ObjectPack
 from objectpack.ui import BaseEditWindow
 from m3_fias.demo.models import Residence
 
-# class FiasWindow(ExtEditWindow):
-
-#     def __init__(self, *args, **kwargs):
-#         super(ExtEditWindow, self).__init__(*args, **kwargs)
-
-#         self.width = 500
-
-#         self.form = ExtForm()
-#         self.data_url = '/asd'
-#         self.addrfield = ExtFiasAddrComponent(use_corps=True)
-
-#         self.form.items.append(self.addrfield)
-
-#         save_btn = ExtButton(text=u'Выбрать', handler="""function(){
-#             var form = Ext.getCmp('%s').form;
-#             form.submit();
-#         }""" % self.form.client_id);
-#         cancel_btn = ExtButton(text=u'Отмена', handler=js_close_window(self))
-#         self.buttons.extend([save_btn, cancel_btn])        
-#         self.items.append(self.form)
-
-# class FiasWindowAction(Action):
-#     url = '/window'
-
-#     def run(self, request, context):
-#         win = FiasWindow()
-#         return ExtUIScriptResult(win)
-
-
-# class FiasDemoPack(ActionPack):
-#     url = '/demo'
-
-#     def __init__(self, *args, **kwargs):
-#         super(FiasDemoPack, self).__init__(*args, **kwargs)
-#         self.window_action = FiasWindowAction()
-#         self.actions.append(self.window_action)
-
 
 class FiasEditWindow(BaseEditWindow):
     def _init_components(self):
@@ -72,7 +35,7 @@ class FiasEditWindow(BaseEditWindow):
         self.width = 800
 
 class FiasDemoPack(ObjectPack):
-    title = u'Fias'
+    title = u'Адресный элемент ФИАС'
     model = Residence
     add_window = edit_window = FiasEditWindow
     add_to_desktop = True
@@ -86,3 +49,6 @@ class FiasDemoPack(ObjectPack):
         'data_index': 'addr',
         'header': u'Адрес'
     }]
+
+    def delete_row(self, obj_id, request, context):
+        Residence.delete_by_id(obj_id)
