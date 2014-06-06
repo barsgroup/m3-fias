@@ -76,6 +76,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self.corps = ExtHiddenField(name = self._corps_field_name, type = ExtHiddenField.STRING)
         self.flat = ExtHiddenField(name = self._flat_field_name, type = ExtHiddenField.STRING)
         self.zipcode = ExtHiddenField(name = self._zipcode_field_name, type = ExtHiddenField.STRING)
+        self.house_guid = ExtHiddenField(name = self._house_field_name + '_guid', type = ExtHiddenField.STRING)
         self._items.append(self.addr)
         self._items.append(self.place)
         self._items.append(self.street)
@@ -83,6 +84,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self._items.append(self.corps)
         self._items.append(self.flat)
         self._items.append(self.zipcode)
+        self._items.append(self.house_guid)
 
         # Установка высоты - самый главный хак в этом коде!
         if self.view_mode == ExtFiasAddrComponent.VIEW_1:
@@ -146,6 +148,8 @@ class ExtFiasAddrComponent(BaseExtContainer):
             self._put_params_value('street_record',  M3JSONEncoder().encode(street))
         else:
             self._put_params_value('place_record',  '')
+
+        self._put_params_value('house_guid_value', (self.house_guid.value if self.house_guid and self.house_guid.value else ''))
 
         self._put_params_value('place_allow_blank', (True if self.place_allow_blank else False))
         self._put_params_value('street_value', (self.street.value if self.street and self.street.value else ''))

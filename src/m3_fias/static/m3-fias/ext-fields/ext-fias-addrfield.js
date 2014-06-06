@@ -143,7 +143,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                         total: 1, 
                         rows: [{
                             house_number: params.house_value, 
-                            house_guid: '', 
+                            house_guid: params.house_guid_value,
                             postal_code: ''
                         }]
                     });
@@ -172,10 +172,10 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 this.house.getStore().baseParams.street = this.street.value;
 
                 this.house_guid = new Ext.form.Hidden({
-                    name: 'house_guid',
+                    name: params.house_field_name + '_guid',
                     xtype: 'hiddenfield'
                 });
-                this.house_guid.setValue(params.house_guid);
+                this.house_guid.setValue(params.house_guid_value);
 
                 if (params.use_corps) {
                     this.corps = new Ext.form.TextField({
@@ -636,7 +636,9 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             this.clearStreet();
         }
         this.fireEvent('change_street', this, val, data);
-        this.house.getStore().baseParams.street = this.street.value;
+        var house_store = this.house.getStore();
+        house_store.baseParams.street = this.street.value;
+        house_store.removeAll();
 
         if (this.addr_visible) {
             this.getNewAddr();
@@ -645,7 +647,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
     onChangeHouse: function () {
         this.fireEvent('change_house', this, this.house.getValue());
         house_num = this.house.getValue();
-        house = this.house.getStore().data.get(house_num);
+        house = this.house.getStore().data.get(house_num);        
         if(house != undefined){
             if(house.data.postal_code){
                 this.zipcode.setValue(house.data.postal_code);

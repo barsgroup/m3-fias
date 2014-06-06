@@ -39,8 +39,5 @@ class Residence(VirtualModel):
     def __unicode__(self):
         return u'{0} ({1})'.format(self.description, self.addr)
 
-    def __repr__(self):
-        return unicode(self)
-
     class _meta:
         verbose_name = u'Места проживания'
