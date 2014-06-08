@@ -8,7 +8,7 @@ import requests
 def get_ao_object(guid):
     request_path = '{0}/objects/ao/{1}'.format(settings.FIAS_API_URL, guid)
 
-    resp = requests.get(request_path, proxies={'http': '', 'https': ''})
+    resp = requests.get(request_path)
     obj = resp.json()
 
     result = {

@@ -7,9 +7,9 @@ def register_actions():
 
 
 def register_urlpatterns():
-    return urls.defaults.patterns('', 
-    	urls.url(r'^fias/remote/(.*)', 
-                 'm3_fias.views.post_proxy_view', 
+    return urls.defaults.patterns('',
+    	urls.url(r'^fias/remote/(.*)$',
+                 'm3_fias.views.post_proxy_view',
                  name='fias_proxy_view'),
     	(r'^fias/', 'm3_fias.views.controller_view')
     )

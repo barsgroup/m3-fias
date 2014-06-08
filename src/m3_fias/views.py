@@ -13,10 +13,6 @@ def post_proxy_view(request, path):
     resp = requests.post(dest_url,
                          cookies=request.COOKIES,
                          data=request.body,
-                         proxies={
-                         	'http': '',
-                         	'https': ''
-                         },
                          headers={'Content-Type': request.META['CONTENT_TYPE']})
     return HttpResponse(resp.content,
                         content_type=resp.headers['Content-Type'],

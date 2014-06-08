@@ -119,7 +119,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 valueNotFoundText: '',
                 invalidClass: params.invalid_class
             });
-            this.street.setValue(params.street_value);            
+            this.street.setValue(params.street_value);
             this.street.getStore().baseParams.boundary = this.place.value;
 
             if (params.level > 2) {
@@ -140,9 +140,9 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
 
                 if(params.house_value != undefined){
                     house_store.loadData({
-                        total: 1, 
+                        total: 1,
                         rows: [{
-                            house_number: params.house_value, 
+                            house_number: params.house_value,
                             house_guid: params.house_guid_value,
                             postal_code: ''
                         }]
@@ -209,7 +209,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             this.addr = new Ext.form.TextArea({
                 name: params.addr_field_name,
                 anchor: '100%',
-                width: '100%',                
+                width: '100%',
                 fieldLabel: params.addr_label,
                 value: params.addr_value,
                 readOnly: true,
@@ -360,7 +360,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     fieldLabel: params.place_label,
                     items: [this.place, this.zipcode],
                     invalidClass: params.invalid_composite_field_class
-                };                
+                };
                 items.push(row, this.row_spacer);
                 if (params.level > 2) {
                     var row_items = [{
@@ -522,7 +522,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             'before_query_place');
     },
     getNewAddr: function () {
-        var place_id;        
+        var place_id;
         if (this.place != undefined) {
             place_id = this.place.getValue();
         }
@@ -647,11 +647,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
     onChangeHouse: function () {
         this.fireEvent('change_house', this, this.house.getValue());
         house_num = this.house.getValue();
-        house = this.house.getStore().data.get(house_num);        
+        house = this.house.getStore().data.get(house_num);
         if(house != undefined){
             if(house.data.postal_code){
                 this.zipcode.setValue(house.data.postal_code);
-            };            
+            };
             this.house_guid.setValue(house.data.house_guid);
         }
 
