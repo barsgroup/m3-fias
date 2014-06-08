@@ -7,7 +7,7 @@ from m3_ext.ui.containers.base import BaseExtContainer
 from m3_ext.ui.fields.simple import ExtHiddenField
 
 from m3_fias import helpers
-from m3.core.json import M3JSONEncoder
+from m3 import M3JSONEncoder
 
 class ExtFiasAddrComponent(BaseExtContainer):
     '''
@@ -134,7 +134,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self._put_params_value('view_mode', self.view_mode)
         self._put_params_value('read_only', self.read_only)
         self._put_params_value('place_value', (self.place.value if self.place and self.place.value else ''))
-        
+
         place = None
         if self.place and self.place.value:
             place = helpers.get_ao_object(self.place.value)
