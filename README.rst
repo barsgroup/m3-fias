@@ -20,6 +20,13 @@ m3-fias
 
   pip install m3_fias -i http://pypi.bars-open.ru/simple
 
+Подключение в m3_blank
+----------------------
+
+1. Добавить ``m3_fias.demo`` в ``INSTALLED_APPS``.
+2. Заменить ``workspace`` в ``views.py`` на ``fias_workspace.html``.
+3. Указать в ``settings.py`` параметр ``FIAS_API_URL`` с адресом сервера ФИАС (на данный момент можно использовать ``http://shark.bars-open.ru:49118/fias/api/v1``.
+
 Переход с m3-kladr
 ------------------
 
@@ -29,6 +36,7 @@ m3-fias
 4. Расширить размер колонок, содержащих коды КЛАДР до 36 символов.
 5. Сконвертируйте коды КЛАДР из этих колонок в GUID коды АО management-командой ``translate_kladr_codes``.
 6. Замените упоминания ``ExtAddrComponent`` в файлах форм на ``ExtFiasAddrComponent``.
+7. Подключить файл ``/static/m3-fias/ext-fields/ext-fias-addrfield.js`` в секцию ``extra_head`` вашего ``workspace`` (пример в ``m3_fias/demo/templates/fias_workspace.html``)
 
 Ссылки на дома
 --------------
