@@ -8,8 +8,8 @@ import requests
 def get_ao_object(guid):
     request_path = '{0}/objects/ao/{1}'.format(settings.FIAS_API_URL, guid)
 
-    resp = requests.get(request_path)
-    obj = resp.json()
+    resp = requests.get(request_path, config={'trust_env': False})
+    obj = resp.json
 
     result = {
         'ao_guid': obj['guid'],
