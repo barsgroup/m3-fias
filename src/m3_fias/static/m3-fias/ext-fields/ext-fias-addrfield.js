@@ -645,18 +645,38 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         }
     },
     onChangeHouse: function () {
-        this.fireEvent('change_house', this, this.house.getValue());
-        house_num = this.house.getValue();
-        house = this.house.getStore().data.get(house_num);
-        if(house != undefined){
-            if(house.data.postal_code){
-                this.zipcode.setValue(house.data.postal_code);
-            };
-            this.house_guid.setValue(house.data.house_guid);
-        }
+        var house_num = this.house.getValue(),
+            addr_field = this,
+            store = this.house.getStore(),
+            house = store.data.get(house_num);
 
-        if (this.addr_visible) {
-            this.getNewAddr();
+        this.fireEvent('change_house', this, house_num);
+
+        if (!house) {
+            store.baseParams.part = house_num;
+            store.load({
+                callback: function(records, options, success) {
+                    if (!success)
+                        return;
+
+                    for (var i = 0; i < records.length; i++) {
+                        data = records[i].data
+                        if (!data.postal_code)
+                            continue;
+
+                        addr_field.zipcode.setValue(data.postal_code);
+                        addr_field.house_guid.setValue(data.house_guid);
+                        if (addr_field.addr_visible)
+                            addr_field.getNewAddr();
+                    }
+                },
+            })
+        } else {
+            this.house_guid.setValue(house.data.house_guid);
+            if (house.data.postal_code)
+                this.zipcode.setValue(house.data.postal_code);
+            if (this.addr_visible)
+                this.getNewAddr();
         }
     },
     onChangeCorps: function () {
