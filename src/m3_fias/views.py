@@ -11,7 +11,7 @@ def post_proxy_view(request, path):
     dest_url = '{0}/{1}'.format(settings.FIAS_API_URL, path)
 
     resp = requests.post(dest_url,
-                         config={'trust_env': False},
+                         params={'trust_env': False},
                          cookies=request.COOKIES,
                          data=request.body,
                          headers={'Content-Type': request.META['CONTENT_TYPE']})

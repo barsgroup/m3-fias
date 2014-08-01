@@ -46,11 +46,11 @@ class Command(BaseCommand):
                 resp = requests.post(settings.FIAS_API_URL + '/translate',
                                      data=dict(kladr=batch))
 
-                if not resp.json['total']:
+                if not resp.json()['total']:
                     continue
 
-                sys.stdout.write(u'{0} translations found for {1} codes.\n'.format(resp.json['total'], len(batch)))
-                for (kladr_code, fias_code) in resp.json['codes'].iteritems():
+                sys.stdout.write(u'{0} translations found for {1} codes.\n'.format(resp.json()['total'], len(batch)))
+                for (kladr_code, fias_code) in resp.json()['codes'].iteritems():
                     t1 = time.time()
                     updated = model.objects.filter(**{field: kladr_code})\
                                            .update(**{field: fias_code})
