@@ -1,4 +1,4 @@
-#coding: utf-8
+# coding: utf-8
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models.loading import get_model
@@ -6,7 +6,6 @@ from django.db.models.loading import get_model
 from django.conf import settings
 
 import requests
-import sys
 import time
 
 
@@ -30,7 +29,7 @@ class Command(BaseCommand):
         total_records = model.objects.count()
 
         for field in field_names:
-            sys.stdout.write(u'Translating field "{0}"...\n'.format(field))
+            self.stdout.write(u'Translating field "{0}"...\n'.format(field))
 
             codes = model.objects.exclude(**{field: ''})\
                                  .values_list(field, flat=True)\
@@ -49,7 +48,7 @@ class Command(BaseCommand):
                 if not resp.json()['total']:
                     continue
 
-                sys.stdout.write(u'{0} translations found for {1} codes.\n'.format(resp.json()['total'], len(batch)))
+                self.stdout.write(u'{0} translations found for {1} codes.\n'.format(resp.json()['total'], len(batch)))
                 for (kladr_code, fias_code) in resp.json()['codes'].iteritems():
                     t1 = time.time()
                     updated = model.objects.filter(**{field: kladr_code})\
@@ -57,7 +56,7 @@ class Command(BaseCommand):
                     t2 = time.time()
                     records_updated += updated
                     processed += 1
-                    sys.stdout.write(u'[{0}s, {4}/{5} codes, {6}/{7} recs] {1} => {2} ({3} records)\n'.format(
+                    self.stdout.write(u'[{0}s, {4}/{5} codes, {6}/{7} recs] {1} => {2} ({3} records)\n'.format(
                         int(t2 - t1), kladr_code, fias_code, updated, processed, total_codes,
                         records_updated, total_records))
-                sys.stdout.write('\n')
+                self.stdout.write('\n')
