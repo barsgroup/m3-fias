@@ -22,14 +22,8 @@ def get_ao_object(guid):
         return None
     elif response.status_code == 200:
         obj = response.json()
-        return {
-            'ao_guid': obj['guid'],
-            'ao_level': obj['level'],
-            'address': obj['address'],
-            'shortname': obj['short_name'],
-            'formal_name': obj['formal_name'],
-            'name': u'{0}. {1}'.format(obj['short_name'], obj['formal_name'])
-        }
+        obj['name'] = u'{0}. {1}'.format(obj['short_name'], obj['formal_name'])
+        return obj
     else:
         raise FiasServerError(response=response)
 
