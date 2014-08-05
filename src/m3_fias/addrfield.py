@@ -231,7 +231,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
     def house_field_name(self, value):
         self._house_field_name = value
         self.house.name = value
-        self.house_guid.name = '_'.join(value, 'guid')
+        self.house_guid.name = '_'.join((value, 'guid'))
 
     @property
     def corps_field_name(self):
