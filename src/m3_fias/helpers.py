@@ -38,10 +38,13 @@ def get_ao_object(guid):
         raise FiasServerError(response=response)
 
 
-def kladr2fias(code):
+def kladr2fias(code, generate_error=False):
     """Конвертация кода КЛАДР в код ФИАС.
 
     :param code: кода объекта в КЛАДР
+    :generate_error bool generate_error: определяет, будут ли генерироваться
+        исключения, если равен False, то в случае ошибки функция вернет пустую
+        строку
     :return: UUID соответствущего объекта в ФИАС
     :rtype: str
     :raises ValueError: если *code* не является числом
@@ -51,7 +54,10 @@ def kladr2fias(code):
     code = str(code)
 
     if not code.isdigit():
-        raise ValueError(code)
+        if generate_error:
+            raise ValueError(code)
+        else:
+            return u''
 
     response = requests.post(
         settings.FIAS_API_URL + '/translate',
@@ -60,15 +66,18 @@ def kladr2fias(code):
 
     if response.status_code == 404:
         # объект с указанным кодом не найден
-        return None
+        return u''
     elif response.status_code == 200:
         data = response.json()
         if data['total'] == 0:
-            return None
+            return u''
         else:
             return data['codes'][code]
     else:
-        raise FiasServerError(response=response)
+        if generate_error:
+            raise FiasServerError(response=response)
+        else:
+            return u''
 
 
 class FiasAddressObject(object):
