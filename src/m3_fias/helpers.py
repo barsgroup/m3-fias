@@ -7,6 +7,11 @@ from django.utils.functional import cached_property
 from django.core.cache import cache
 
 
+class FiasAddressObjectDoesNotExist():
+    """Запрошенный объект не существует.
+    """
+
+
 class FiasServerError(IOError):
     """Ошибка на сервере ФИАС
     """
@@ -190,15 +195,39 @@ class FiasAddressObject(object):
     def __init__(self, guid):
         self.guid = unicode(uuid.UUID(guid))
 
-        object_data = FiasAddressObject._get_object_data(self.guid)
-        if object_data is not None:
-            self._set_object_data(object_data)
+    @staticmethod
+    def create(guid, generate_error=False):
+        """Возвращает адресный объект, заполненный данными, полученными с
+        сервера ФИАС. Если generate_error == True, то в случае проблем будут
+        генерироваться исключения, иначе метод вернет None.
+
+        :param unicode guid: GUID адресного объекта.
+        :param bool generate_error: флаг, определяющий необходимость генерации
+            исключений в случае ошибок.
+        :rtype: FiasAddressObject | NoneType
+        :raises ValueError: если значение аргумента guid не является
+            идентификатором GUID.
+        :raises FiasAddressObjectDoesNotExist: если адресный объект с указанным
+            идентификатором не существует в базе ФИАС.
+        :raises FiasServerError: если во время запроса данных с сервера ФИАС
+            произошла ошибка.
+        """
+        object_data = FiasAddressObject._get_object_data(guid)
+        if object_data is None:
+            if generate_error:
+                raise FiasAddressObjectDoesNotExist()
+            else:
+                return None
+        else:
+            result = FiasAddressObject(guid)
+            result._set_object_data(object_data)
+            return result
 
     @cached_property
     def parent(self):
         """Родительский адресный объект.
         """
         if self.parent_guid:
-            return FiasAddressObject(self.parent_guid)
+            return FiasAddressObject.create(self.parent_guid)
         else:
             return None
