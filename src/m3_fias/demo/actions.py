@@ -1,16 +1,6 @@
 #coding: utf-8
-
-from m3.actions import ActionPack, Action
-from m3_ext.ui.windows import ExtEditWindow
-from m3_ext.ui.containers import ExtContextMenu, ExtForm
-from m3_ext.ui.controls.buttons import ExtButton
-from m3_ext.ui.shortcuts import js_close_window
-from m3_ext.ui.results import ExtUIScriptResult
 from m3_ext.ui.fields.simple import ExtStringField
-
 from m3_fias.addrfield import ExtFiasAddrComponent
-from m3.actions.results import OperationResult
-
 from objectpack import ObjectPack
 from objectpack.ui import BaseEditWindow
 from m3_fias.demo.models import Residence
@@ -34,6 +24,7 @@ class FiasEditWindow(BaseEditWindow):
         super(FiasEditWindow, self).set_params(params)
         self.width = 800
 
+
 class FiasDemoPack(ObjectPack):
     title = u'Адресный элемент ФИАС'
     model = Residence
@@ -44,7 +35,7 @@ class FiasDemoPack(ObjectPack):
     columns = [{
         'data_index': 'description',
         'header': u'Наименование'
-    }, 
+    },
     {
         'data_index': 'addr',
         'header': u'Адрес'
