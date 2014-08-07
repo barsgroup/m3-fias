@@ -1,16 +1,15 @@
 #coding: utf-8
 import json
-import requests
 from django.conf import settings
 from django.http import HttpResponse
-from m3_fias.helpers import FiasAddressObject
+from m3_fias.helpers import FiasAddressObject, fias_server_session
 from m3_fias.demo.app_meta import fias_controller
 
 
 def post_proxy_view(request, path):
     dest_url = '{0}/{1}'.format(settings.FIAS_API_URL, path)
 
-    resp = requests.post(
+    resp = fias_server_session.post(
         dest_url,
         params={'trust_env': False},
         cookies=request.COOKIES,

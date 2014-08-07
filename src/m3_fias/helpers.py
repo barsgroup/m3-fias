@@ -7,6 +7,10 @@ from django.utils.functional import cached_property
 from django.core.cache import cache
 
 
+# сессия для доступа к серверу ФИАС по HTTP/1.1
+fias_server_session = requests.Session()
+
+
 class FiasAddressObjectDoesNotExist():
     """Запрошенный объект не существует.
     """
@@ -58,7 +62,7 @@ def kladr2fias(code, generate_error=False):
         else:
             return u''
 
-    response = requests.post(
+    response = fias_server_session.post(
         settings.FIAS_API_URL + '/translate',
         data=dict(kladr=code)
     )
@@ -148,7 +152,7 @@ class FiasAddressObject(object):
         if result is not None:
             return result
 
-        response = requests.get(
+        response = fias_server_session.get(
             '/'.join((settings.FIAS_API_URL, 'objects', 'ao', guid)),
             params={'trust_env': False}
         )
