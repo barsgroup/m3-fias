@@ -2,12 +2,12 @@
 from setuptools import setup, find_packages
 
 requires = []
-with open('requirements.txt', 'r') as f:
+with open('src/requirements.txt', 'r') as f:
     requires.extend(f.readlines())
 
 setup(name='m3-fias',
-      version='0.1.1.4',
-      url='https://src.bars-open.ru/py/m3/m3_contrib/kladr',
+      version='0.1.1.5',
+      url='https://bitbucket.org/barsgroup/m3-fias',
       license='Apache License, Version 2.0',
       author='BARS Group',
       description=u'Федеральная информационная адресная система',
