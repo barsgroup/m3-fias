@@ -108,7 +108,12 @@ class FiasAddressObject(object):
 
     # параметры кеширования данных ФИАС
     _CACHE_KEY_PREFIX = 'm3-fias'
-    _CACHE_TIMEOUT = 24 * 60 * 60  # таймаут кеширования - 1 сутки
+    if hasattr(settings, 'FIAS_CACHE_PREFIX') and settings.FIAS_CACHE_PREFIX:
+        _CACHE_KEY_PREFIX = settings.FIAS_CACHE_PREFIX
+    # таймаут кеширования, по умолчанию 1 сутки
+    _CACHE_TIMEOUT = 24 * 60 * 60
+    if hasattr(settings, 'FIAS_CACHE_TIMEOUT') and settings.FIAS_CACHE_TIMEOUT:
+        _CACHE_TIMEOUT = settings.FIAS_CACHE_TIMEOUT
 
     # Уровень адресного объекта
     level = None
@@ -209,8 +214,17 @@ class FiasAddressObject(object):
             идентификатором не существует в базе ФИАС.
         :raises FiasServerError: если во время запроса данных с сервера ФИАС
             произошла ошибка.
+        :raises requests.ConnectionError: если не удалось соединиться с
+            сервером ФИАС
         """
-        object_data = FiasAddressObject._get_object_data(guid)
+        try:
+            object_data = FiasAddressObject._get_object_data(guid)
+        except requests.ConnectionError:
+            if generate_error:
+                raise
+            else:
+                return None
+
         if object_data is None:
             if generate_error:
                 raise FiasAddressObjectDoesNotExist()
