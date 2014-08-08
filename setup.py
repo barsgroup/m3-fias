@@ -6,7 +6,7 @@ with open('requirements.txt', 'r') as f:
     requires.extend(f.readlines())
 
 setup(name='m3-fias',
-      version='0.1.1.3',
+      version='0.1.1.4',
       url='https://src.bars-open.ru/py/m3/m3_contrib/kladr',
       license='Apache License, Version 2.0',
       author='BARS Group',
