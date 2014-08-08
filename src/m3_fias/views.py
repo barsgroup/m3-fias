@@ -1,5 +1,6 @@
 #coding: utf-8
 import json
+from django.core.cache import cache
 from django.conf import settings
 from django.http import HttpResponse
 from m3_fias.helpers import FiasAddressObject, fias_server_session
@@ -7,17 +8,23 @@ from m3_fias.demo.app_meta import fias_controller
 
 
 def post_proxy_view(request, path):
-    dest_url = '{0}/{1}'.format(settings.FIAS_API_URL, path)
+    cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, request.body))
+    resp = cache.get(cache_key)
+    if resp is None:
+        dest_url = '{0}/{1}'.format(settings.FIAS_API_URL, path)
 
-    resp = fias_server_session.post(
-        dest_url,
-        params={'trust_env': False},
-        cookies=request.COOKIES,
-        data=request.body,
-        headers={'Content-Type': request.META['CONTENT_TYPE']}
-    )
+        resp = fias_server_session.post(
+            dest_url,
+            params={'trust_env': False},
+            data=request.body,
+            headers={'Content-Type': request.META['CONTENT_TYPE']}
+        )
+
+        if resp.status_code == 200:  # запрос выполнен успешно
+            cache.set(cache_key, resp, FiasAddressObject._CACHE_TIMEOUT)
 
     data = resp.json()
+
     for obj in data['rows']:
         if 'ao_level' in obj and obj['ao_level'] == 6:
             address_object = FiasAddressObject.create(obj['ao_guid'])
