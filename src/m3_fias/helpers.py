@@ -7,6 +7,10 @@ from django.utils.functional import cached_property
 from django.core.cache import cache
 
 
+# сессия для доступа к серверу ФИАС по HTTP/1.1
+fias_server_session = requests.Session()
+
+
 class FiasAddressObjectDoesNotExist():
     """Запрошенный объект не существует.
     """
@@ -20,64 +24,63 @@ class FiasServerError(IOError):
 
 
 def get_ao_object(guid):
-    uuid.UUID(guid)  # проверка, GUID это или нет
-
-    request_path = '{0}/objects/ao/{1}'.format(settings.FIAS_API_URL, guid)
-    response = requests.get(request_path, params={'trust_env': False})
-
-    if response.status_code == 404:
-        # объект с указанным GUID не найден в ФИАС
-        return None
-    elif response.status_code == 200:
-        obj = response.json()
-
-        return {
-            'ao_guid': obj['guid'],
-            'ao_level': obj['level'],
-            'address': obj['address'],
-            'shortname': obj['short_name'],
-            'formal_name': obj['formal_name'],
-            'name': u'{0}. {1}'.format(obj['short_name'], obj['formal_name'])
+    address_object = FiasAddressObject.create(guid)
+    result = {}
+    if address_object is not None:
+        name = u'{0}. {1}'.format(address_object.short_name,
+                                  address_object.formal_name)
+        result = {
+            'ao_guid': address_object.guid,
+            'ao_level': address_object.level,
+            'address': address_object.address,
+            'shortname': address_object.short_name,
+            'formal_name': address_object.formal_name,
+            'name': name,
         }
-    else:
-        raise FiasServerError(response=response)
+
+    return result
 
 
-def kladr2fias(code, generate_error=False):
+def kladr2fias(kladr_code, generate_error=False):
     """Конвертация кода КЛАДР в код ФИАС.
 
-    :param code: кода объекта в КЛАДР
+    :param kladr_code: кода объекта в КЛАДР
     :generate_error bool generate_error: определяет, будут ли генерироваться
         исключения, если равен False, то в случае ошибки функция вернет пустую
         строку
     :return: UUID соответствущего объекта в ФИАС
     :rtype: str
-    :raises ValueError: если *code* не является числом
+    :raises ValueError: если *kladr_code* не является числом
     :raises m3_fias.helpers.FiasServerError: если во время выполнения запроса
         на сервере ФИАС возникла ошибка
     """
-    code = str(code)
+    kladr_code = unicode(kladr_code)
 
-    if not code.isdigit():
+    if not kladr_code.isdigit():
         if generate_error:
-            raise ValueError(code)
+            raise ValueError(kladr_code)
         else:
             return u''
 
-    response = requests.post(
+    cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, kladr_code))
+    fias_code = cache.get(cache_key)
+    if fias_code is not None:
+        return fias_code
+
+    response = fias_server_session.post(
         settings.FIAS_API_URL + '/translate',
-        data=dict(kladr=code)
+        data=dict(kladr=kladr_code)
     )
 
-    if response.status_code == 404:
-        # объект с указанным кодом не найден
-        return u''
-    elif response.status_code == 200:
+    if response.status_code == 200:
         data = response.json()
         if data['total'] == 0:
-            return u''
+            fias_code = u''
         else:
-            return data['codes'][code]
+            fias_code = data['codes'][kladr_code]
+
+        cache.set(cache_key, fias_code, FiasAddressObject._CACHE_TIMEOUT)
+        return fias_code
     else:
         if generate_error:
             raise FiasServerError(response=response)
@@ -110,7 +113,12 @@ class FiasAddressObject(object):
 
     # параметры кеширования данных ФИАС
     _CACHE_KEY_PREFIX = 'm3-fias'
-    _CACHE_TIMEOUT = 24 * 60 * 60  # таймаут кеширования - 1 сутки
+    if hasattr(settings, 'FIAS_CACHE_PREFIX') and settings.FIAS_CACHE_PREFIX:
+        _CACHE_KEY_PREFIX = settings.FIAS_CACHE_PREFIX
+    # таймаут кеширования, по умолчанию 1 сутки
+    _CACHE_TIMEOUT = 24 * 60 * 60
+    if hasattr(settings, 'FIAS_CACHE_TIMEOUT') and settings.FIAS_CACHE_TIMEOUT:
+        _CACHE_TIMEOUT = settings.FIAS_CACHE_TIMEOUT
 
     # Уровень адресного объекта
     level = None
@@ -154,7 +162,7 @@ class FiasAddressObject(object):
         if result is not None:
             return result
 
-        response = requests.get(
+        response = fias_server_session.get(
             '/'.join((settings.FIAS_API_URL, 'objects', 'ao', guid)),
             params={'trust_env': False}
         )
@@ -211,8 +219,17 @@ class FiasAddressObject(object):
             идентификатором не существует в базе ФИАС.
         :raises FiasServerError: если во время запроса данных с сервера ФИАС
             произошла ошибка.
+        :raises requests.ConnectionError: если не удалось соединиться с
+            сервером ФИАС
         """
-        object_data = FiasAddressObject._get_object_data(guid)
+        try:
+            object_data = FiasAddressObject._get_object_data(guid)
+        except requests.ConnectionError:
+            if generate_error:
+                raise
+            else:
+                return None
+
         if object_data is None:
             if generate_error:
                 raise FiasAddressObjectDoesNotExist()

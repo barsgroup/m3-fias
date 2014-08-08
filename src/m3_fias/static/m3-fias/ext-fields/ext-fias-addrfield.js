@@ -19,7 +19,8 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 {name: 'shortname'},
                 {name: 'postal_code'},
                 {name: 'formal_name'},
-                {name: 'name'}
+                {name: 'name'},
+                {name: 'place_address'}
             ],
         });
         place_store.baseParams['levels'] = [1, 4, 6];
@@ -571,11 +572,14 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
 
         var addr_text = '';
 
-        if (street != undefined) {
-            addr_text = place.shortname + '. ' + place.formal_name + ', ' + street.shortname + '. ' + street.formal_name;
-        } else {
+        if (place.ao_level == 6)  // населенный пункт
+            addr_text = place.place_address;
+        else
             addr_text = place.shortname + '. ' + place.formal_name;
-        }
+
+        if (street != undefined)
+            addr_text += ', ' + street.shortname + '. ' + street.formal_name;
+
         // проставим индекс
         if (zipcode != '') {
             addr_text = zipcode + ', ' + addr_text;

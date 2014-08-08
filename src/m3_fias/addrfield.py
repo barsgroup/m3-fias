@@ -1,13 +1,10 @@
 #coding:utf-8
-
-from django.conf import settings
-from django.core.urlresolvers import reverse
-
 from m3_ext.ui.containers.base import BaseExtContainer
 from m3_ext.ui.fields.simple import ExtHiddenField
 
 from m3_fias import helpers
 from m3 import M3JSONEncoder
+
 
 class ExtFiasAddrComponent(BaseExtContainer):
     '''
