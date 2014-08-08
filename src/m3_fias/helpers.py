@@ -41,41 +41,46 @@ def get_ao_object(guid):
     return result
 
 
-def kladr2fias(code, generate_error=False):
+def kladr2fias(kladr_code, generate_error=False):
     """Конвертация кода КЛАДР в код ФИАС.
 
-    :param code: кода объекта в КЛАДР
+    :param kladr_code: кода объекта в КЛАДР
     :generate_error bool generate_error: определяет, будут ли генерироваться
         исключения, если равен False, то в случае ошибки функция вернет пустую
         строку
     :return: UUID соответствущего объекта в ФИАС
     :rtype: str
-    :raises ValueError: если *code* не является числом
+    :raises ValueError: если *kladr_code* не является числом
     :raises m3_fias.helpers.FiasServerError: если во время выполнения запроса
         на сервере ФИАС возникла ошибка
     """
-    code = str(code)
+    kladr_code = unicode(kladr_code)
 
-    if not code.isdigit():
+    if not kladr_code.isdigit():
         if generate_error:
-            raise ValueError(code)
+            raise ValueError(kladr_code)
         else:
             return u''
+
+    cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, kladr_code))
+    fias_code = cache.get(cache_key)
+    if fias_code is not None:
+        return fias_code
 
     response = fias_server_session.post(
         settings.FIAS_API_URL + '/translate',
-        data=dict(kladr=code)
+        data=dict(kladr=kladr_code)
     )
 
-    if response.status_code == 404:
-        # объект с указанным кодом не найден
-        return u''
-    elif response.status_code == 200:
+    if response.status_code == 200:
         data = response.json()
         if data['total'] == 0:
-            return u''
+            fias_code = u''
         else:
-            return data['codes'][code]
+            fias_code = data['codes'][kladr_code]
+
+        cache.set(cache_key, fias_code, FiasAddressObject._CACHE_TIMEOUT)
+        return fias_code
     else:
         if generate_error:
             raise FiasServerError(response=response)
