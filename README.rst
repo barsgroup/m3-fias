@@ -32,11 +32,18 @@ m3-fias
 
 1. Установите ``m3-fias``.
 2. Добавьте ``m3-fias`` в список зависимостей проекта.
-3. Прописать адрес сервера ФИАС в *FIAS_API_URL* ``settings.py``.
-4. Расширить размер колонок, содержащих коды КЛАДР до 36 символов.
-5. Сконвертируйте коды КЛАДР из этих колонок в GUID коды АО management-командой ``translate_kladr_codes``.
-6. Замените упоминания ``ExtAddrComponent`` в файлах форм на ``ExtFiasAddrComponent``.
-7. Подключить файл ``/static/m3-fias/ext-fields/ext-fias-addrfield.js`` в секцию ``extra_head`` вашего ``workspace`` (пример в ``m3_fias/demo/templates/fias_workspace.html``)
+3. Прописать адрес сервера ФИАС в *FIAS_API_URL* ``settings.py``. Также
+   поддерживаются параметры *FIAS_CACHE_PREFIX* (префикс для ключей в кэше,
+   значение по умолчанию "m3-fias") и *FIAS_CACHE_TIMEOUT* (время кеширования
+   данных, значение по умолчанию - 1 сутки).
+4. Т.к. при работе с сервером ФИАС используется кеширование, необходимо
+   настроить кэш Django. Использование `Local-memory caching
+   <http://djbook.ru/rel1.4/topics/cache.html#local-memory-caching>`_
+   не рекомендуется в production cреде.
+5. Расширить размер колонок, содержащих коды КЛАДР до 36 символов.
+6. Сконвертируйте коды КЛАДР из этих колонок в GUID коды АО management-командой ``translate_kladr_codes``.
+7. Замените упоминания ``ExtAddrComponent`` в файлах форм на ``ExtFiasAddrComponent``.
+8. Подключить файл ``/static/m3-fias/ext-fields/ext-fias-addrfield.js`` в секцию ``extra_head`` вашего ``workspace`` (пример в ``m3_fias/demo/templates/fias_workspace.html``)
 
 Ссылки на дома
 --------------
