@@ -1,10 +1,12 @@
 # coding: utf-8
+import re
 import uuid
 import datetime
 import requests
 from django.conf import settings
 from django.utils.functional import cached_property
 from django.core.cache import cache
+from django.core.validators import RegexValidator
 
 
 # сессия для доступа к серверу ФИАС по HTTP/1.1
@@ -248,3 +250,13 @@ class FiasAddressObject(object):
             return FiasAddressObject.create(self.parent_guid)
         else:
             return None
+
+
+# валидатор для полей моделей, содержащих коды адресных объектов ФИАС
+fias_field_validator = RegexValidator(
+    regex=re.compile(
+        '^$|^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+        re.IGNORECASE
+    ),
+    message=u'Указан неверный код адресного объекта ФИАС'
+)
