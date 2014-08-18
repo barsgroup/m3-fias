@@ -165,8 +165,7 @@ class FiasAddressObject(object):
             return result
 
         response = fias_server_session.get(
-            '/'.join((settings.FIAS_API_URL, 'objects', 'ao', guid)),
-            params={'trust_env': False}
+            ''.join((settings.FIAS_API_URL, guid, '/')),
         )
 
         if response.status_code == 200:
@@ -181,24 +180,25 @@ class FiasAddressObject(object):
         return result
 
     def _set_object_data(self, data):
-        self.level = data['level']
-        self.record_guid = unicode(uuid.UUID(data['_record']))
-        self.formal_name = data['formal_name']
-        self.official_name = data['official_name']
-        self.short_name = data['short_name']
-        self.address = data['address']
-        self.postcode = data['postcode']
-        self.okato = data['okato']
-        self.oktmo = data['oktmo']
-        self.ifnsfl = data['ifnsfl']
-        self.ifnsul = data['ifnsul']
-        self.terr_ifnsfl = data['terr_ifnsfl']
-        self.terr_ifnsul = data['terr_ifnsul']
 
-        if data['parent_guid']:
-            self.parent_guid = unicode(uuid.UUID(data['parent_guid']))
+        self.level = data['aolevel']
+        self.record_guid = unicode(uuid.UUID(data['aoid']))
+        self.formal_name = data['formalname']
+        self.official_name = data['offname']
+        self.short_name = data['shortname']
+        self.address = data['fullname']
+        self.postcode = data.get('postcode', '')
+        self.okato = data.get('okato', '')
+        self.oktmo = data.get('oktmo', '')
+        self.ifnsfl = data.get('ifnsfl', '')
+        self.ifnsul = data.get('ifnsul', '')
+        self.terr_ifnsfl = data.get('terr_ifnsfl', '')
+        self.terr_ifnsul = data.get('terr_ifnsul', '')
 
-        if data['updated']:
+        if data['parentguid']:
+            self.parent_guid = unicode(uuid.UUID(data['parentguid']))
+
+        if data.get('updated'):
             self.updated = datetime.datetime.strptime(data['updated'],
                                                       '%d.%m.%Y')
 
