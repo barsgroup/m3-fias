@@ -17,7 +17,7 @@ def address_proxy_view(request):
         dest_url = settings.FIAS_API_URL
         data = {
             'aolevel': ','.join(request.POST.getlist('levels')),
-            'search': request.POST.get('filter'),
+            'scan': request.POST.get('filter'),
         }
         if request.POST.get('boundary'):
             data['parentguid'] = request.POST.get('boundary')
