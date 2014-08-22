@@ -5,8 +5,8 @@ from django.db.models.loading import get_model
 
 from django.conf import settings
 
-import requests
 import time
+from m3_fias.helpers import fias_server_session
 
 
 BATCH_SIZE = 100
@@ -42,14 +42,15 @@ class Command(BaseCommand):
             while codes:
                 batch = codes[:BATCH_SIZE]
                 codes = codes[BATCH_SIZE:]
-                resp = requests.post(settings.FIAS_API_URL + '/translate',
-                                     data=dict(kladr=batch))
-
-                if not resp.json()['total']:
+                resp = fias_server_session.get(settings.FIAS_API_URL,
+                                               params={'code': ','.join(batch), 'view': 'simple'})
+                if not resp.json()['count']:
                     continue
 
-                self.stdout.write(u'{0} translations found for {1} codes.\n'.format(resp.json()['total'], len(batch)))
-                for (kladr_code, fias_code) in resp.json()['codes'].iteritems():
+                self.stdout.write(u'{0} translations found for {1} codes.\n'.format(resp.json()['count'], len(batch)))
+                for rec in resp.json()['results']:
+                    kladr_code = rec['code']
+                    fias_code = rec['aoguid']
                     t1 = time.time()
                     updated = model.objects.filter(**{field: kladr_code})\
                                            .update(**{field: fias_code})

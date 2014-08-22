@@ -11,6 +11,7 @@ from django.core.validators import RegexValidator
 
 # сессия для доступа к серверу ФИАС по HTTP/1.1
 fias_server_session = requests.Session()
+fias_server_session.trust_env = False
 
 
 class FiasAddressObjectDoesNotExist():
@@ -69,17 +70,17 @@ def kladr2fias(kladr_code, generate_error=False):
     if fias_code is not None:
         return fias_code
 
-    response = fias_server_session.post(
-        settings.FIAS_API_URL + '/translate',
-        data=dict(kladr=kladr_code)
+    response = fias_server_session.get(
+        settings.FIAS_API_URL,
+        data={'code': kladr_code, 'view': 'simple'}
     )
 
     if response.status_code == 200:
         data = response.json()
-        if data['total'] == 0:
+        if data['count'] == 0:
             fias_code = u''
         else:
-            fias_code = data['codes'][kladr_code]
+            fias_code = data['results'][0]['aoguid']
 
         cache.set(cache_key, fias_code, FiasAddressObject._CACHE_TIMEOUT)
         return fias_code
