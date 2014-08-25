@@ -6,7 +6,7 @@ from django.db.models.loading import get_model
 from django.conf import settings
 
 import time
-from m3_fias.helpers import fias_server_session
+from m3_fias.helpers import get_fias_service
 
 
 BATCH_SIZE = 100
@@ -42,8 +42,10 @@ class Command(BaseCommand):
             while codes:
                 batch = codes[:BATCH_SIZE]
                 codes = codes[BATCH_SIZE:]
-                resp = fias_server_session.get(settings.FIAS_API_URL,
-                                               params={'code': ','.join(batch), 'view': 'simple'})
+                resp = get_fias_service(
+                    '',
+                    {'code': ','.join(batch), 'view': 'simple'}
+                )
                 if not resp.json()['count']:
                     continue
 

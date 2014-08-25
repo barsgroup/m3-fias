@@ -3,7 +3,7 @@ import json
 from django.core.cache import cache
 from django.conf import settings
 from django.http import HttpResponse
-from m3_fias.helpers import FiasAddressObject, fias_server_session
+from m3_fias.helpers import FiasAddressObject, get_fias_service
 from m3_fias.demo.app_meta import fias_controller
 
 
@@ -22,10 +22,9 @@ def address_proxy_view(request):
         if request.POST.get('boundary'):
             data['parentguid'] = request.POST.get('boundary')
 
-        resp = fias_server_session.get(
-            dest_url,
-            params=data,
-            headers={'Content-Type': 'application/json'}
+        resp = get_fias_service(
+            '',
+            data
         )
 
         if resp.status_code == 200:  # запрос выполнен успешно
@@ -84,10 +83,9 @@ def houses_proxy_view(request):
             'search': request.POST.get('part'),
         }
 
-        resp = fias_server_session.get(
-            dest_url,
-            params=data,
-            headers={'Content-Type': 'application/json'}
+        resp = get_fias_service(
+            street + '/houses/',
+            data
         )
 
         if resp.status_code == 200:  # запрос выполнен успешно

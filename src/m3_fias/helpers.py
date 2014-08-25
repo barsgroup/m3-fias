@@ -1,4 +1,5 @@
 # coding: utf-8
+import os
 import re
 import uuid
 import datetime
@@ -10,8 +11,7 @@ from django.core.validators import RegexValidator
 
 
 # сессия для доступа к серверу ФИАС по HTTP/1.1
-fias_server_session = requests.Session()
-fias_server_session.trust_env = False
+fias_server_session = None
 
 
 class FiasAddressObjectDoesNotExist():
@@ -70,9 +70,9 @@ def kladr2fias(kladr_code, generate_error=False):
     if fias_code is not None:
         return fias_code
 
-    response = fias_server_session.get(
-        settings.FIAS_API_URL,
-        data={'code': kladr_code, 'view': 'simple'}
+    response = get_fias_service(
+        '',
+        {'code': kladr_code, 'view': 'simple'}
     )
 
     if response.status_code == 200:
@@ -165,8 +165,8 @@ class FiasAddressObject(object):
         if result is not None:
             return result
 
-        response = fias_server_session.get(
-            ''.join((settings.FIAS_API_URL, guid, '/')),
+        response = get_fias_service(
+            guid + '/'
         )
 
         if response.status_code == 200:
@@ -261,3 +261,36 @@ fias_field_validator = RegexValidator(
     ),
     message=u'Указан неверный код адресного объекта ФИАС'
 )
+
+
+def get_fias_service(url='', params=None):
+    u""" Запрос к rest-сервису ФИАС
+    """
+    global fias_server_session
+    if fias_server_session is None:
+        if hasattr(settings, 'FIAS_OAUTH2'):
+            from requests_oauthlib import OAuth2Session
+            from oauthlib.oauth2 import LegacyApplicationClient
+            if __debug__:
+                os.environ.setdefault('OAUTHLIB_INSECURE_TRANSPORT', 'True')
+            fias_server_session = OAuth2Session(
+                client=LegacyApplicationClient(settings.FIAS_OAUTH2['CLIENT_ID'])
+            )
+            fias_server_session.trust_env = False
+            fias_server_session.fetch_token(
+                token_url=settings.FIAS_OAUTH2['TOKEN_URL'],
+                username=settings.FIAS_OAUTH2['USERNAME'],
+                password=settings.FIAS_OAUTH2['PASSWORD'],
+                client_id=settings.FIAS_OAUTH2['CLIENT_ID'],
+                client_secret=settings.FIAS_OAUTH2['CLIENT_SECRET']
+            )
+        else:
+            fias_server_session = requests.Session()
+            fias_server_session.trust_env = False
+
+    resp = fias_server_session.get(
+        settings.FIAS_API_URL + url,
+        params=params,
+        headers={'Content-Type': 'application/json'}
+    )
+    return resp
