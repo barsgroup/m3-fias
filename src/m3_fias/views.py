@@ -38,14 +38,15 @@ def address_proxy_view(request):
             if address_object:
                 district = address_object.parent
                 region = district.parent
-                obj['place_address'] = u', '.join((
-                    u''.join((region.short_name, u'. ',
-                              region.formal_name)),
-                    u''.join((district.short_name, u'. ',
-                              district.formal_name)),
-                    u''.join((address_object.short_name, u'. ',
-                              address_object.formal_name)),
-                ))
+                if region is not None:
+                    obj['place_address'] = u', '.join((
+                        u''.join((region.short_name, u'. ',
+                                  region.formal_name)),
+                        u''.join((district.short_name, u'. ',
+                                  district.formal_name)),
+                        u''.join((address_object.short_name, u'. ',
+                                  address_object.formal_name)),
+                    ))
 
         obj['postal_code'] = obj['postalcode']
         obj['ao_level'] = obj['aolevel']

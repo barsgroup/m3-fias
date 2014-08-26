@@ -8,3 +8,7 @@ syntax: re
 egg-info
 build/
 dist/
+
+syntax: regexp
+^\.project$
+^\.settings$
