@@ -425,6 +425,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
     },
     beforeStreetQuery: function (qe) {
         this.street.getStore().baseParams.boundary = this.place.value;
+        this.fireEvent('before_query_street', this, qe);
     },
     clearStreet: function () {
         if (this.street != undefined) {
@@ -443,10 +444,13 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         Ext.fias.AddrField.superclass.initComponent.call(this);
 
         this.mon(this.place, 'change', this.onChangePlace, this);
+        this.mon(this.place, 'select', this.onChangePlace, this);
         if (this.level > 1) {
             this.mon(this.street, 'change', this.onChangeStreet, this);
+            this.mon(this.street, 'select', this.onChangeStreet, this);
             if (this.level > 2) {
                 this.mon(this.house, 'change', this.onChangeHouse, this);
+                this.mon(this.house, 'select', this.onChangeHouse, this);
                 if (this.use_corps) {
                     this.mon(this.corps, 'change', this.onChangeCorps, this);
                 }
@@ -459,6 +463,9 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         this.mon(this.place, 'beforequery', this.beforePlaceQuery, this);
         if (this.level > 1) {
             this.mon(this.street, 'beforequery', this.beforeStreetQuery, this);
+        }
+        if (this.level > 2) {
+            this.mon(this.house, 'beforequery', this.beforeHouseQuery, this);
         }
         if (this.addr_visible) {
             this.addr.on('afterrender', this.afterRenderAddr, this)
@@ -520,7 +527,21 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
              * @param {AddrField} this
              * @param {Event} Событие
              */
-            'before_query_place');
+            'before_query_place',
+            /**
+             * @event before_query_street
+             * Перед запросом данных об улице
+             * @param {AddrField} this
+             * @param {Event} Событие
+             */
+            'before_query_street',
+            /**
+             * @event before_query_house
+             * Перед запросом данных о доме
+             * @param {AddrField} this
+             * @param {Event} Событие
+             */
+            'before_query_house');
     },
     getNewAddr: function () {
         var place_id;
@@ -569,7 +590,6 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
     },
     generateTextAddr: function (place, street, house, corps, flat, zipcode) {
         /* Формирование текстового представления полного адреса */
-
         var addr_text = '';
 
         if (place.ao_level == 6)  // населенный пункт
@@ -640,9 +660,6 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             this.clearStreet();
         }
         this.fireEvent('change_street', this, val, data);
-        var house_store = this.house.getStore();
-        house_store.baseParams.street = this.street.value;
-        house_store.removeAll();
 
         if (this.addr_visible) {
             this.getNewAddr();
@@ -658,21 +675,21 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
 
         if (!house) {
             store.baseParams.part = house_num;
+            store.baseParams.street = this.street.getValue();
             store.load({
                 callback: function(records, options, success) {
-                    if (!success)
-                        return;
+                    if (success) {
+                        for (var i = 0; i < records.length; i++) {
+                            data = records[i].data
+                            if (!data.postal_code)
+                                continue;
 
-                    for (var i = 0; i < records.length; i++) {
-                        data = records[i].data
-                        if (!data.postal_code)
-                            continue;
-
-                        addr_field.zipcode.setValue(data.postal_code);
-                        addr_field.house_guid.setValue(data.house_guid);
-                        if (addr_field.addr_visible)
-                            addr_field.getNewAddr();
+                            addr_field.zipcode.setValue(data.postal_code);
+                            addr_field.house_guid.setValue(data.house_guid);
+                        }
                     }
+                    if (addr_field.addr_visible)
+                        addr_field.getNewAddr();
                 },
             })
         } else {
@@ -708,8 +725,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         if (this.addr_visible) {
             this.addr.setReadOnly(false);
         }
-    }
-
+    },
+    beforeHouseQuery: function (qe) {
+        qe.combo.store.baseParams.street = this.street.getValue();
+        this.fireEvent('before_query_house', this, qe);
+    },
 });
 
 Ext.reg('fias-addrfield', 'Ext.fias.AddrField');
