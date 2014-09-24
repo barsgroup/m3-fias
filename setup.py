@@ -8,7 +8,7 @@ with open('src/requirements.txt', 'r') as f:
 setup(name='m3-fias',
       version='0.2.0.0',
       url='https://bitbucket.org/barsgroup/m3-fias',
-      license='MIT,
+      license='MIT',
       author='BARS Group',
       description=u'Федеральная информационная адресная система',
       author_email='bars@bars-open.ru',
