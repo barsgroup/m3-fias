@@ -15,16 +15,31 @@ BATCH_SIZE = 100
 class Command(BaseCommand):
     args = '<app_name model_name field1 field2... fieldN>'
     help = 'Converts KLADR codes in database to FIAS GUIDs.'
+    
+    @staticmethod
+    def _get_model(app_name, model_name, south_orm=None):
+        
+        if south_orm:
+            # To call from the migration
+            model_path = '.'.join([app_name, model_name])
+            model = south_orm[model_path]
+        else:
+            model = get_model(app_name, model_name)
+            
+        return model
 
     def handle(self, *args, **kwargs):
         def is_num(val):
             return all([c >= '0' and c <= '9' for c in val])
 
         if len(args) < 3:
-            raise CommandError('You should specify app, model and at least one field to convert!')
+            raise CommandError(
+                'You should specify app, model and at least one field to convert!')
 
         app_name, model_name = args[:2]
-        model = get_model(app_name, model_name)
+        south_orm = kwargs.get('south_orm')
+        model = Command._get_model(
+            app_name, model_name, south_orm=south_orm)
         field_names = args[2:]
         total_records = model.objects.count()
 
