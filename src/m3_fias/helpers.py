@@ -1,13 +1,17 @@
 # coding: utf-8
+from itertools import islice
+import datetime
 import os
 import re
 import uuid
-import datetime
-import requests
+
 from django.conf import settings
-from django.utils.functional import cached_property
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.db.models import Q
+from django.utils.functional import cached_property
+import requests
 
 
 # сессия для доступа к серверу ФИАС по HTTP/1.1
@@ -294,3 +298,65 @@ def get_fias_service(url='', params=None):
         headers={'Content-Type': 'application/json'}
     )
     return resp
+
+
+def translate_kladr_codes(model, field_names, clean_invalid=False,
+                          batch_size=100):
+    u"""Выполняет перевод кодов КЛАДР в коды ФИАС в указанных полях модели.
+
+    Соответствующие коды ФИАС запрашиваются на сервере ФИАС.
+
+    :param model: модель, в которой нужно выполнить замену кодов адресных
+        объектов
+    :type model: django.db.models.Model
+
+    :param str field_names: список названий полей модели, в которых будет
+        осуществляться поиск и замена кодов КЛАДР.
+
+    :param bool clean_invalid: флаг, определяющих необходимость удаления
+        непреобразованных кодов путем замены их пустой строкой
+
+    :param int batch_size: количество кодов КЛАДР, отправляемых на сервер ФИАС,
+        в одном запросе.
+
+    :raises requests.exceptions.ConnectionError: если не удалось
+        подключиться к серверу ФИАС
+    """
+    # перевод кодов адресных объектов из КЛАДР в ФИАС
+    for field_name in field_names:
+        kladr_codes = model.objects.exclude(
+            Q(**{field_name: u''}) | Q(**{field_name + '__isnull': True})
+        ).values_list(field_name, flat=True).distinct().iterator()
+
+        batch = u','.join(islice(kladr_codes, 0, batch_size))
+        if not batch:
+            continue
+
+        response = get_fias_service('', dict(code=batch, view='simple'))
+        if response.status_code != 200 or not response.json()['count']:
+            continue
+
+        for record in response.json()['results']:
+            model.objects.filter(
+                **{field_name: record['code']}
+            ).update(
+                **{field_name: record['aoguid']}
+            )
+
+    # удаление непреобразованных данных
+    if clean_invalid:
+        for obj in model.objects.iterator():
+            changed = False
+            for field_name in field_names:
+                field_value = getattr(obj, field_name)
+                if not field_value:
+                    continue
+
+                try:
+                    fias_field_validator(field_value)
+                except ValidationError:
+                    setattr(obj, field_name, u'')
+                    changed = True
+
+            if changed:
+                obj.save()
