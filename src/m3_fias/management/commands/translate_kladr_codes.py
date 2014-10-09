@@ -13,4 +13,5 @@ class Command(BaseCommand):
         model = get_model(app_name, model_name)
         field_names = args[2:]
 
-        translate_kladr_codes(model, field_names, clean_invalid=True)
+        translate_kladr_codes(model.objects.all(), field_names,
+                              clean_invalid=True)
