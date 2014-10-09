@@ -300,15 +300,15 @@ def get_fias_service(url='', params=None):
     return resp
 
 
-def translate_kladr_codes(model, field_names, clean_invalid=False,
+def translate_kladr_codes(query, field_names, clean_invalid=False,
                           batch_size=100):
     u"""Выполняет перевод кодов КЛАДР в коды ФИАС в указанных полях модели.
 
     Соответствующие коды ФИАС запрашиваются на сервере ФИАС.
 
-    :param model: модель, в которой нужно выполнить замену кодов адресных
-        объектов
-    :type model: django.db.models.Model
+    :param query: запрос на выборку записей, в которых нужно выполнить замену
+        кодов адресных объектов
+    :type query: django.db.models.query.QuerySet
 
     :param str field_names: список названий полей модели, в которых будет
         осуществляться поиск и замена кодов КЛАДР.
@@ -324,7 +324,7 @@ def translate_kladr_codes(model, field_names, clean_invalid=False,
     """
     # перевод кодов адресных объектов из КЛАДР в ФИАС
     for field_name in field_names:
-        kladr_codes = model.objects.exclude(
+        kladr_codes = query.exclude(
             Q(**{field_name: u''}) | Q(**{field_name + '__isnull': True})
         ).values_list(field_name, flat=True).distinct().iterator()
 
@@ -337,7 +337,7 @@ def translate_kladr_codes(model, field_names, clean_invalid=False,
             continue
 
         for record in response.json()['results']:
-            model.objects.filter(
+            query.filter(
                 **{field_name: record['code']}
             ).update(
                 **{field_name: record['aoguid']}
@@ -345,7 +345,7 @@ def translate_kladr_codes(model, field_names, clean_invalid=False,
 
     # удаление непреобразованных данных
     if clean_invalid:
-        for obj in model.objects.iterator():
+        for obj in query.iterator():
             changed = False
             for field_name in field_names:
                 field_value = getattr(obj, field_name)
