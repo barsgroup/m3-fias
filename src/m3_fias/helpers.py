@@ -36,7 +36,7 @@ def get_ao_object(guid):
     if address_object is not None:
         name = (u'{0}. {1}'.format(
             address_object.short_name, address_object.formal_name) if
-            address_object.level != 6 else address_object.address)
+            address_object.level != address_object.LEVEL_PLACE else address_object.address)
         result = {
             'ao_guid': address_object.guid,
             'ao_level': address_object.level,
