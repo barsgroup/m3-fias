@@ -34,8 +34,9 @@ def get_ao_object(guid):
     address_object = FiasAddressObject.create(guid)
     result = {}
     if address_object is not None:
-        name = u'{0}. {1}'.format(address_object.short_name,
-                                  address_object.formal_name)
+        name = (u'{0}. {1}'.format(
+            address_object.short_name, address_object.formal_name) if
+            address_object.level != 6 else address_object.address)
         result = {
             'ao_guid': address_object.guid,
             'ao_level': address_object.level,

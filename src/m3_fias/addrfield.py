@@ -144,7 +144,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
             street = helpers.get_ao_object(self.street.value)
             self._put_params_value('street_record',  M3JSONEncoder().encode(street))
         else:
-            self._put_params_value('place_record',  '')
+            self._put_params_value('street_record',  '')
 
         self._put_params_value('house_guid_value', (self.house_guid.value if self.house_guid and self.house_guid.value else ''))
 

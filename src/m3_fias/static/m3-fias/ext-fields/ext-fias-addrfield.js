@@ -132,7 +132,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     fields: [
                         {name: 'house_number'},
                         {name: 'postal_code'},
-                        {name: 'house_guid'}
+                        {name: 'houseguid'}
                     ],
                     sortInfo: {
                         field: 'house_number'
@@ -144,7 +144,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                         total: 1,
                         rows: [{
                             house_number: params.house_value,
-                            house_guid: params.house_guid_value,
+                            houseguid: params.house_guid_value,
                             postal_code: ''
                         }]
                     });
@@ -693,7 +693,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 },
             })
         } else {
-            this.house_guid.setValue(house.data.house_guid);
+            this.house_guid.setValue(house.data.houseguid);
             if (house.data.postal_code)
                 this.zipcode.setValue(house.data.postal_code);
             if (this.addr_visible)
