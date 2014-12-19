@@ -1,20 +1,19 @@
 #coding: utf-8
 import json
 from django.core.cache import cache
-from django.conf import settings
 from django.http import HttpResponse
 from m3_fias.helpers import FiasAddressObject, get_fias_service
 from m3_fias.demo.app_meta import fias_controller
 
+# Признак успешности выполнения запроса
+STATUS_CODE_OK = 200
+
 
 def address_proxy_view(request):
-    u"""
-    Запрос списка адресных объктов
-    """
+    u"""Запрос списка адресных объктов."""
     cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, request.body))
-    resp = cache.get(cache_key)
-    if resp is None:
-        dest_url = settings.FIAS_API_URL
+    data = cache.get(cache_key)
+    if data is None:
         data = {
             'aolevel': ','.join(request.POST.getlist('levels')),
             'scan': request.POST.get('filter'),
@@ -27,10 +26,11 @@ def address_proxy_view(request):
             data
         )
 
-        if resp.status_code == 200:  # запрос выполнен успешно
-            cache.set(cache_key, resp, FiasAddressObject._CACHE_TIMEOUT)
-
-    data = resp.json()
+        if resp.status_code == STATUS_CODE_OK:  # запрос выполнен успешно
+            data = resp.json()
+            data['status_code'] = resp.status_code
+            data['Content-Type'] = resp.headers['Content-Type']
+            cache.set(cache_key, data, FiasAddressObject._CACHE_TIMEOUT)
 
     for obj in data['results']:
         if 'aolevel' in obj and obj['aolevel'] in [6]:
@@ -56,30 +56,29 @@ def address_proxy_view(request):
         obj['formal_name'] = obj['formalname']
 
         if 'aolevel' in obj and obj['aolevel'] in [7]:
-            obj['name'] = '%s. %s'% (obj['shortname'], obj['formalname'])
+            obj['name'] = '%s. %s' % (obj['shortname'], obj['formalname'])
 
     result = {
         'rows': data['results'],
         'total': data['count'],
     }
 
-    return HttpResponse(json.dumps(result),
-                        content_type=resp.headers['Content-Type'],
-                        status=resp.status_code)
+    return HttpResponse(
+        json.dumps(result),
+        content_type=data['Content-Type'],
+        status=data['status_code']
+    )
 
 
 def houses_proxy_view(request):
-    u"""
-    Запрос списка домов
-    """
+    u"""Запрос списка домов."""
     cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, request.body))
-    resp = cache.get(cache_key)
-    if resp is None:
+    data = cache.get(cache_key)
+    if data is None:
         if request.POST.get('street'):
             street = request.POST.get('street')
         else:
             street = ''
-        dest_url = '{0}{1}/houses/'.format(settings.FIAS_API_URL, street)
         data = {
             'search': request.POST.get('part'),
         }
@@ -89,10 +88,11 @@ def houses_proxy_view(request):
             data
         )
 
-        if resp.status_code == 200:  # запрос выполнен успешно
-            cache.set(cache_key, resp, FiasAddressObject._CACHE_TIMEOUT)
-
-    data = resp.json()
+        if resp.status_code == STATUS_CODE_OK:  # запрос выполнен успешно
+            data = resp.json()
+            data['status_code'] = resp.status_code
+            data['Content-Type'] = resp.headers['Content-Type']
+            cache.set(cache_key, data, FiasAddressObject._CACHE_TIMEOUT)
 
     for obj in data['results']:
         obj['house_number'] = obj['housenum']
@@ -103,9 +103,11 @@ def houses_proxy_view(request):
         'total': data['count'],
     }
 
-    return HttpResponse(json.dumps(result),
-                        content_type=resp.headers['Content-Type'],
-                        status=resp.status_code)
+    return HttpResponse(
+        json.dumps(result),
+        content_type=data['Content-Type'],
+        status=data['status_code']
+    )
 
 
 def controller_view(request):
