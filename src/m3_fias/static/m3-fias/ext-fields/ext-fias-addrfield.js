@@ -428,7 +428,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         this.fireEvent('before_query_street', this, qe);
     },
     clearStreet: function () {
-        if (this.street != undefined) {
+        if (this.street !== undefined) {
             this.street.setValue('');
         }
     },
@@ -445,9 +445,8 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         if (this.addr_visible) {
             this.addr.getEl().on('dblclick', this.onDblClickAddr, this)
         }
-    }
+    },
 
-    ,
     initComponent: function () {
         Ext.fias.AddrField.superclass.initComponent.call(this);
 
@@ -476,7 +475,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             this.mon(this.house, 'beforequery', this.beforeHouseQuery, this);
         }
         if (this.addr_visible) {
-            this.addr.on('afterrender', this.afterRenderAddr, this)
+            this.addr.on('afterrender', this.afterRenderAddr, this);
         }
 
         this.addEvents(
@@ -607,22 +606,23 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 addr_text = place.shortname + '. ' + place.formal_name;
         }
 
-        if (street != undefined)
+        if (Ext.isObject(street)){
             addr_text += ', ' + street.shortname + '. ' + street.formal_name;
+        }
 
         // проставим индекс
-        if (zipcode != '') {
+        if(!Ext.isEmpty(zipcode)){
             addr_text = zipcode + ', ' + addr_text;
         }
         // обработаем и поставим дом с квартирой
-        if (house != '' && house != undefined) {
+        if (!Ext.isEmpty(house)) {
             addr_text = addr_text + ', ' + 'д. ' + house;
         }
         // обработаем и поставим дом с квартирой
-        if (corps != '' && corps != undefined) {
+        if (!Ext.isEmpty(corps)) {
             addr_text = addr_text + ', ' + 'корп. ' + corps;
         }
-        if (flat != '' && flat != undefined) {
+        if (!Ext.isEmpty(flat)) {
             addr_text = addr_text + ', ' + 'кв. ' + flat;
         }
         return addr_text;
@@ -660,7 +660,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         if (data != undefined) {
             data = data.data;
             if (data.postal_code) {
-                this.zipcode.setValue(data.postal_code)
+                this.zipcode.setValue(data.postal_code);
             }else{
                 this.zipcode.setValue('');
             }
