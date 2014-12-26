@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 from m3_ext.ui.containers.base import BaseExtContainer
 from m3_ext.ui.fields.simple import ExtHiddenField
 
@@ -10,20 +10,25 @@ class ExtFiasAddrComponent(BaseExtContainer):
     '''
     Блок указания адреса
     '''
-    PLACE = 1 # Уровнь населенного пункта
-    STREET = 2 # Уровнь улицы
-    HOUSE = 3 # Уровень дома
-    FLAT = 4 # Уровень квартиры
+    PLACE = 1  # Уровнь населенного пункта
+    STREET = 2  # Уровнь улицы
+    HOUSE = 3  # Уровень дома
+    FLAT = 4  # Уровень квартиры
 
-    VIEW_0 = 0 # хитрый режим (пока не будем делать), когда отображается только адрес, а его редактирование отдельным окном
-    VIEW_1 = 1 # в одну строку + адрес
-    VIEW_2 = 2 # в две строки + адрес, только для level > PLACE
-    VIEW_3 = 3 # в три строки + адрес, только для level > STREET
+    # VIEW_0 - хитрый режим (пока не будем делать), когда отображается только
+    # адрес, а его редактирование отдельным окном
+    VIEW_0 = 0
+    VIEW_1 = 1  # в одну строку + адрес
+    VIEW_2 = 2  # в две строки + адрес, только для level > PLACE
+    VIEW_3 = 3  # в три строки + адрес, только для level > STREET
 
-    INVALID_CLASS = 'm3-form-invalid' #Название хтмл-класса м3,
-    # который отвечает за стиль отображения неверно заполненных полей
-    INVALID_COMPOSITE_FIELD_CLASS = 'm3-composite-field-invalid' #Название класса,
-    # отвечающего за прорисовку неверно заполненных композитных полей
+    # Название хтмл-класса м3, который отвечает за стиль отображения неверно
+    # заполненных полей
+    INVALID_CLASS = 'm3-form-invalid'
+
+    # Название класса, отвечающего за прорисовку неверно заполненных
+    # композитных полей
+    INVALID_COMPOSITE_FIELD_CLASS = 'm3-composite-field-invalid'
 
     def __init__(self, *args, **kwargs):
         super(ExtFiasAddrComponent, self).__init__(*args, **kwargs)
@@ -51,10 +56,9 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self.corps_allow_blank = True
         self.flat_allow_blank = True
 
-        #Названия инвалидных классов
-        self.invalid_class = ExtFiasAddrComponent.INVALID_CLASS
-        self.invalid_composite_field_class = ExtFiasAddrComponent\
-        .INVALID_COMPOSITE_FIELD_CLASS
+        # Названия инвалидных классов
+        self.invalid_class = self.INVALID_CLASS
+        self.invalid_composite_field_class = self.INVALID_COMPOSITE_FIELD_CLASS
 
         self.addr_visible = True
         self.read_only = False
@@ -66,14 +70,17 @@ class ExtFiasAddrComponent(BaseExtContainer):
 
         self.layout = 'form'
         self.template = 'ext-fields/ext-fias-addrfield.js'
-        self.addr = ExtHiddenField(name = self._addr_field_name, type = ExtHiddenField.STRING)
-        self.place = ExtHiddenField(name = self._place_field_name, type = ExtHiddenField.STRING)
-        self.street = ExtHiddenField(name = self._street_field_name, type = ExtHiddenField.STRING)
-        self.house = ExtHiddenField(name = self._house_field_name, type = ExtHiddenField.STRING)
-        self.corps = ExtHiddenField(name = self._corps_field_name, type = ExtHiddenField.STRING)
-        self.flat = ExtHiddenField(name = self._flat_field_name, type = ExtHiddenField.STRING)
-        self.zipcode = ExtHiddenField(name = self._zipcode_field_name, type = ExtHiddenField.STRING)
-        self.house_guid = ExtHiddenField(name = self._house_field_name + '_guid', type = ExtHiddenField.STRING)
+
+        ExtHF = lambda s: ExtHiddenField(name=s, type=ExtHiddenField.STRING)
+        self.addr = ExtHF(self._addr_field_name)
+        self.place = ExtHF(self._place_field_name)
+        self.street = ExtHF(self._street_field_name)
+        self.house = ExtHF(self._house_field_name)
+        self.corps = ExtHF(self._corps_field_name)
+        self.flat = ExtHF(self._flat_field_name)
+        self.zipcode = ExtHF(self._zipcode_field_name)
+        self.house_guid = ExtHF(self._house_field_name + '_guid')
+
         self._items.append(self.addr)
         self._items.append(self.place)
         self._items.append(self.street)
@@ -110,7 +117,8 @@ class ExtFiasAddrComponent(BaseExtContainer):
             Экранирует в строке спец. символы, такие как \ ' "
             '''
 
-            return in_str.replace('"','\"').replace("'","\'").replace('\\', '\\\\')
+            return in_str.replace('"', '\"').replace("'", "\'").replace(
+                '\\', '\\\\')
 
         super(ExtFiasAddrComponent, self).render_params()
         self._put_params_value('place_field_name', self.place_field_name)
@@ -130,42 +138,47 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self._put_params_value('level', self.level)
         self._put_params_value('view_mode', self.view_mode)
         self._put_params_value('read_only', self.read_only)
-        self._put_params_value('place_value', (self.place.value if self.place and self.place.value else ''))
+        self._put_params_value('place_value', self.place.value)
 
         place = None
         if self.place and self.place.value:
             place = helpers.get_ao_object(self.place.value)
-            self._put_params_value('place_record',  M3JSONEncoder().encode(place))
+            self._put_params_value(
+                'place_record',  M3JSONEncoder().encode(place))
         else:
             self._put_params_value('place_record',  '')
 
         street = None
         if self.street and self.street.value:
             street = helpers.get_ao_object(self.street.value)
-            self._put_params_value('street_record',  M3JSONEncoder().encode(street))
+            self._put_params_value(
+                'street_record',  M3JSONEncoder().encode(street))
         else:
             self._put_params_value('street_record',  '')
 
-        self._put_params_value('house_guid_value', (self.house_guid.value if self.house_guid and self.house_guid.value else ''))
+        self._put_params_value('house_guid_value', self.house_guid.value)
 
-        self._put_params_value('place_allow_blank', (True if self.place_allow_blank else False))
-        self._put_params_value('street_value', (self.street.value if self.street and self.street.value else ''))
-        self._put_params_value('street_allow_blank', (True if self.street_allow_blank else False))
-        self._put_params_value('house_value', (escape_str(self.house.value) if self.house and self.house.value else ''))
+        self._put_params_value('place_allow_blank',
+                               bool(self.place_allow_blank))
+        self._put_params_value('street_value', self.street.value)
+        self._put_params_value('street_allow_blank',
+                               bool(self.place_allow_blank))
+        self._put_params_value('house_value', escape_str(self.house.value))
         self._put_params_value('house_allow_blank', self.house_allow_blank)
-        self._put_params_value('corps_value', (escape_str(self.corps.value) if self.corps and self.corps.value else ''))
+        self._put_params_value('corps_value', escape_str(self.corps.value))
         self._put_params_value('corps_allow_blank', self.corps_allow_blank)
-        self._put_params_value('flat_value', (escape_str(self.flat.value) if self.flat and self.flat.value else ''))
+        self._put_params_value('flat_value', escape_str(self.flat.value))
         self._put_params_value('flat_allow_blank', self.flat_allow_blank)
         self._put_params_value('zipcode_value', self.get_zipcode())
-        self._put_params_value('addr_value', (escape_str(self.addr.value) if self.addr and self.addr.value else ''))
+        self._put_params_value('addr_value', escape_str(self.addr.value))
 
         self._put_params_value('fias_api_url', '/fias/remote')
         self._put_params_value('invalid_class', self.invalid_class)
-        self._put_params_value('invalid_composite_field_class', self.invalid_composite_field_class)
+        self._put_params_value('invalid_composite_field_class',
+                               self.invalid_composite_field_class)
         self._put_params_value('use_corps', self.use_corps)
 
-    def make_read_only(self, access_off=True, exclude_list=(), *args, **kwargs):
+    def make_read_only(self, access_off=True, exclude_list=(), *args, **kw):
         self.read_only = access_off
 
     def get_zipcode(self):
@@ -178,13 +191,12 @@ class ExtFiasAddrComponent(BaseExtContainer):
             return self.zipcode.value
         if self.addr:
             addr = self.addr.value
-            if len(addr)>6:
+            if len(addr) > 6:
                 try:
                     return unicode(int(addr[:6]))
                 except ValueError:
                     pass
         return ''
-
 
     def render_base_config(self):
         res = super(ExtFiasAddrComponent, self).render_base_config()
