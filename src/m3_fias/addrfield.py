@@ -62,8 +62,8 @@ class ExtFiasAddrComponent(BaseExtContainer):
 
         self.addr_visible = True
         self.read_only = False
-        self.level = ExtFiasAddrComponent.FLAT
-        self.view_mode = ExtFiasAddrComponent.VIEW_2
+        self.level = kwargs.get('level', self.FLAT)
+        self.view_mode = kwargs.get('view_mode', self.VIEW_2)
 
         # Если True — показывает поле корпуса в режиме >=3
         self.use_corps = False
