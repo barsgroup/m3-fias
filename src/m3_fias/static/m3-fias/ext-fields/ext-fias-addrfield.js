@@ -432,6 +432,14 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             this.street.setValue('');
         }
     },
+    clearHouse: function (){
+        if( this.house !== undefined){
+            this.house.setValue('');
+            if(this.corps !== undefined){
+                this.corps.setValue('');
+            }
+        }
+    },
     afterRenderAddr: function () {
         //вашем обработчик dbl click через DOM елемент
         if (this.addr_visible) {
@@ -654,7 +662,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             }else{
                 this.zipcode.setValue('');
             }
-            this.house.setValue('');
+            this.clearHouse();
         } else {
             this.zipcode.setValue('');
             this.clearStreet();
