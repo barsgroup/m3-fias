@@ -49,6 +49,12 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self.flat_label = u'Квартира'
         self.addr_label = u'Адрес'
 
+        # Ширина меток
+        self.street_label_width = 45
+        self.house_label_width = 27
+        self.corps_label_width = 45
+        self.flat_label_width = 55
+
         # Атрибуты, определяющие необходимость заполнения полей
         self.place_allow_blank = True
         self.street_allow_blank = True
@@ -91,21 +97,18 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self._items.append(self.house_guid)
 
         # Установка высоты - самый главный хак в этом коде!
-        if self.view_mode == ExtFiasAddrComponent.VIEW_1:
-            self.height = 25
-        elif self.view_mode == ExtFiasAddrComponent.VIEW_2:
-            if self.level >= ExtFiasAddrComponent.STREET:
-                self.height = 25*2
-            else:
-                self.height = 25
-        elif self.view_mode == ExtFiasAddrComponent.VIEW_3:
-            if self.level > ExtFiasAddrComponent.HOUSE:
-                self.height = 25*3
-            else:
-                if self.level > ExtFiasAddrComponent.STREET:
-                    self.height = 25*2
-                else:
-                    self.height = 25
+        row_height = 29
+
+        self.height = row_height
+        if self.view_mode == self.VIEW_2:
+            if self.level >= self.STREET:
+                self.height += row_height
+        elif self.view_mode == self.VIEW_3:
+            if self.level >= self.STREET:
+                self.height += row_height
+            if self.level >= self.HOUSE:
+                self.height += row_height
+
         if self.addr_visible:
             self.height += 36+7
 
@@ -134,7 +137,11 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self._put_params_value('corps_label', self.corps_label)
         self._put_params_value('flat_label', self.flat_label)
         self._put_params_value('addr_label', self.addr_label)
-        self._put_params_value('addr_visible', (True if self.addr_visible else False ))
+        self._put_params_value('street_label_width', self.street_label_width)
+        self._put_params_value('house_label_width', self.house_label_width)
+        self._put_params_value('corps_label_width', self.corps_label_width)
+        self._put_params_value('flat_label_width', self.flat_label_width)
+        self._put_params_value('addr_visible', bool(self.addr_visible))
         self._put_params_value('level', self.level)
         self._put_params_value('view_mode', self.view_mode)
         self._put_params_value('read_only', self.read_only)
