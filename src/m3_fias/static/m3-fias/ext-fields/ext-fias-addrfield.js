@@ -600,10 +600,12 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         /* Формирование текстового представления полного адреса */
         var addr_text = '';
 
-        if (place.ao_level == 6)  // населенный пункт
-            addr_text = place.place_address;
-        else
-            addr_text = place.shortname + '. ' + place.formal_name;
+        if(Ext.isObject(place)){
+            if (place.ao_level == 6)  // населенный пункт
+                addr_text = place.place_address;
+            else
+                addr_text = place.shortname + '. ' + place.formal_name;
+        }
 
         if (street != undefined)
             addr_text += ', ' + street.shortname + '. ' + street.formal_name;
