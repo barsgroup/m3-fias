@@ -122,6 +122,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             });
             this.street.setValue(params.street_value);
             this.street.getStore().baseParams.boundary = this.place.value;
+            this.street.param_label_width = params.street_label_width;
 
             if (params.level > 2) {
                 var house_store = new Ext.data.JsonStore({
@@ -171,6 +172,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 });
                 this.house.setValue(params.house_value);
                 this.house.getStore().baseParams.street = this.street.value;
+                this.house.param_label_width = params.house_label_width;
 
                 this.house_guid = new Ext.form.Hidden({
                     name: params.house_field_name + '_guid',
@@ -190,6 +192,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                         width: 40,
                         invalidClass: params.invalid_class
                     });
+                    this.corps.param_label_width = params.corps_label_width;
                 }
                 if (params.level > 3) {
                     this.flat = new Ext.form.TextField({
@@ -203,6 +206,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                         width: 40,
                         invalidClass: params.invalid_class
                     });
+                    this.flat.param_label_width = params.flat_label_width;
                 }
             }
         }
@@ -218,68 +222,69 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 height: 36
             });
         }
+
+        function formed(item, flex, extraconf){
+
+            item.anchor ='100%';
+
+            conf = {
+                xtype: 'container',
+                layout: 'form',
+                labelPad: 3,
+                labelWidth: item.param_label_width || 100,
+                items: [item],
+                height: 22,
+            };
+
+            if(Ext.isNumber(flex)){
+                conf.flex = flex;
+            }else{
+                // установка фиксированной ширины
+                conf.width = conf.labelWidth + conf.labelPad + 
+                             (conf.items[0].width || 100);
+            }
+
+            return Ext.apply(conf, extraconf || {});
+        }
+
+
+
         if (params.view_mode == 1) {
+            var row_items;
             // В одну строку
             this.place.flex = 1;
             if (params.level > 2) {
-                var row_items = [this.place, this.zipcode];
+                row_items = [this.place, this.zipcode];
             } else {
-                var row_items = [this.place];
+                row_items = [this.place];
             }
 
             if (params.level > 1) {
-                this.street.flex = 1;
-                this.street.fieldLabel = params.street_label;
-                row_items.push({
-                    xtype: 'label',
-                    style: {
-                        padding: '3px'
-                    },
-                    text: params.street_label + ':'
-                }, this.street);
+                row_items.push(formed(this.street, 1));
+
                 if (params.level > 2) {
-                    this.house.fieldLabel = params.house_label;
-                    row_items.push({
-                        xtype: 'label',
-                        style: {
-                            padding: '3px'
-                        },
-                        text: params.house_label + ':'
-                    }, this.house, this.house_guid);
+                    row_items.push(formed(this.house));
+                    row_items.push(this.house_guid);
                     if (params.use_corps) {
-                        this.corps.fieldLabel = params.corps_label;
-                        row_items.push({
-                            xtype: 'label',
-                            style: {
-                                padding: '3px'
-                            },
-                            text: params.corps_label + ':'
-                        }, this.corps);
+                        row_items.push(formed(this.corps));
                     }
+
                     if (params.level > 3) {
-                        this.flat.fieldLabel = params.flat_label;
-                        row_items.push({
-                            xtype: 'label',
-                            style: {
-                                padding: '3px'
-                            },
-                            text: params.flat_label + ':'
-                        }, this.flat);
+                        row_items.push(formed(this.flat));
                     }
                 }
             }
+
             var row = {
                 xtype: 'compositefield',
                 anchor: '100%',
                 fieldLabel: params.place_label,
                 items: row_items,
                 invalidClass: params.invalid_composite_field_class
-
             };
             items.push(row, this.row_spacer);
-        }
 
-        if (params.view_mode == 2) {
+        } else if (params.view_mode == 2) {
             // В две строки
             if (params.level > 2) {
                 this.place.flex = 1;
@@ -298,36 +303,19 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             if (params.level > 1) {
                 this.street.flex = 1;
                 var row_items = [this.street];
+
                 if (params.level > 2) {
-                    this.house.fieldLabel = params.house_label;
-                    row_items.push({
-                        xtype: 'label',
-                        style: {
-                            padding: '3px'
-                        },
-                        text: params.house_label + ':'
-                    }, this.house, this.house_guid);
+                    row_items.push(formed(this.house));
+                    row_items.push(this.house_guid);
                     if (params.use_corps) {
-                        this.corps.fieldLabel = params.corps_label;
-                        row_items.push({
-                            xtype: 'label',
-                            style: {
-                                padding: '3px'
-                            },
-                            text: params.corps_label + ':'
-                        }, this.corps);
+                        row_items.push(formed(this.corps));
                     }
+
                     if (params.level > 3) {
-                        this.flat.fieldLabel = params.flat_label;
-                        row_items.push({
-                            xtype: 'label',
-                            style: {
-                                padding: '3px'
-                            },
-                            text: params.flat_label + ':'
-                        }, this.flat);
+                        row_items.push(formed(this.flat));
                     }
                 }
+
                 var row = {
                     xtype: 'compositefield',
                     anchor: '100%',
@@ -337,8 +325,8 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 };
                 items.push(row, this.row_spacer);
             }
-        }
-        if (params.view_mode == 3) {
+        } else if (params.view_mode == 3) {
+
             // В три строки
             if (params.level > 2) {
                 this.place.flex = 1;
@@ -355,53 +343,33 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 items.push(this.place);
             }
             if (params.level > 1) {
-                var street_row = {
-                    xtype: 'compositefield',
-                    anchor: '100%',
-                    fieldLabel: params.place_label,
-                    items: [this.place, this.zipcode],
-                    invalidClass: params.invalid_composite_field_class
-                };
-                items.push(row, this.row_spacer);
+                this.street.anchor ='100%';
+                items.push(this.street, this.row_spacer);
+
                 if (params.level > 2) {
-                    var row_items = [{
-                        xtype: 'container',
-                        layout: 'form',
-                        items: this.house,
-                        style: {
-                            overflow: 'hidden'
-                        }
-                    }, this.house_guid];
+
+                    this.house.flex = 1;
+                    this.house.width = undefined;
+                    var row_items = [this.house, this.house_guid];
+
                     if (params.use_corps) {
-                        row_items.push({
-                            xtype: 'container',
-                            layout: 'form',
-                            items: this.corps,
-                            style: {
-                                overflow: 'hidden'
-                            }
-                        });
+                        row_items.push(formed(this.corps, 1));
                     }
+
                     if (params.level > 3) {
-                        row_items.push({
-                            xtype: 'container',
-                            layout: 'form',
-                            style: {
-                                padding: '0px 0px 0px 5px',
-                                overflow: 'hidden'
-                            },
-                            items: this.flat
-                        });
+                        row_items.push(formed(this.flat, 1));
                     }
-                    var row = new Ext.Container({
+
+                    var row = {
                         anchor: '100%',
-                        layout: 'column',
+                        xtype: 'compositefield',
+                        fieldLabel: this.house.fieldLabel,
                         items: row_items,
                         style: {
                             overflow: 'hidden'
                         }
-                    });
-                    items.push(row, this.row_spacer);
+                    };
+                    items.push(row);
                 }
             }
         }
@@ -428,8 +396,16 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         this.fireEvent('before_query_street', this, qe);
     },
     clearStreet: function () {
-        if (this.street != undefined) {
+        if (this.street !== undefined) {
             this.street.setValue('');
+        }
+    },
+    clearHouse: function (){
+        if( this.house !== undefined){
+            this.house.setValue('');
+            if(this.corps !== undefined){
+                this.corps.setValue('');
+            }
         }
     },
     afterRenderAddr: function () {
@@ -437,9 +413,8 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         if (this.addr_visible) {
             this.addr.getEl().on('dblclick', this.onDblClickAddr, this)
         }
-    }
+    },
 
-    ,
     initComponent: function () {
         Ext.fias.AddrField.superclass.initComponent.call(this);
 
@@ -468,7 +443,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             this.mon(this.house, 'beforequery', this.beforeHouseQuery, this);
         }
         if (this.addr_visible) {
-            this.addr.on('afterrender', this.afterRenderAddr, this)
+            this.addr.on('afterrender', this.afterRenderAddr, this);
         }
 
         this.addEvents(
@@ -592,27 +567,30 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         /* Формирование текстового представления полного адреса */
         var addr_text = '';
 
-        if (place.ao_level == 6)  // населенный пункт
-            addr_text = place.place_address;
-        else
-            addr_text = place.shortname + '. ' + place.formal_name;
+        if(Ext.isObject(place)){
+            if (place.ao_level == 6)  // населенный пункт
+                addr_text = place.place_address;
+            else
+                addr_text = place.shortname + '. ' + place.formal_name;
+        }
 
-        if (street != undefined)
+        if (Ext.isObject(street)){
             addr_text += ', ' + street.shortname + '. ' + street.formal_name;
+        }
 
         // проставим индекс
-        if (zipcode != '') {
+        if(!Ext.isEmpty(zipcode)){
             addr_text = zipcode + ', ' + addr_text;
         }
         // обработаем и поставим дом с квартирой
-        if (house != '' && house != undefined) {
+        if (!Ext.isEmpty(house)) {
             addr_text = addr_text + ', ' + 'д. ' + house;
         }
         // обработаем и поставим дом с квартирой
-        if (corps != '' && corps != undefined) {
+        if (!Ext.isEmpty(corps)) {
             addr_text = addr_text + ', ' + 'корп. ' + corps;
         }
-        if (flat != '' && flat != undefined) {
+        if (!Ext.isEmpty(flat)) {
             addr_text = addr_text + ', ' + 'кв. ' + flat;
         }
         return addr_text;
@@ -650,11 +628,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         if (data != undefined) {
             data = data.data;
             if (data.postal_code) {
-                this.zipcode.setValue(data.postal_code)
+                this.zipcode.setValue(data.postal_code);
             }else{
                 this.zipcode.setValue('');
             }
-            this.house.setValue('');
+            this.clearHouse();
         } else {
             this.zipcode.setValue('');
             this.clearStreet();
