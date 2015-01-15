@@ -18,7 +18,7 @@ import requests
 fias_server_session = None
 
 
-class FiasAddressObjectDoesNotExist():
+class FiasAddressObjectDoesNotExist(Exception):
     """Запрошенный объект не существует.
     """
 
