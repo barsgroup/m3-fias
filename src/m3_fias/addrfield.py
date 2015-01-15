@@ -25,6 +25,12 @@ class ExtFiasAddrComponent(BaseExtContainer):
     INVALID_COMPOSITE_FIELD_CLASS = 'm3-composite-field-invalid' #Название класса,
     # отвечающего за прорисовку неверно заполненных композитных полей
 
+    FIELD_HEIGHT = 22  # высота строки
+    FIELD_MARGIN = 4  # нижний отсуп
+    FIELD_SPLIT = 5  # горизональный разделитель между полями
+    ADDR_FIELD = 36  # высота поля полного адреса (textarea)
+    TOTAL_FIELD_HEIGHT = FIELD_HEIGHT + FIELD_MARGIN + FIELD_SPLIT
+
     def __init__(self, *args, **kwargs):
         super(ExtFiasAddrComponent, self).__init__(*args, **kwargs)
         # Названия полей к которым биндится КЛАДР
@@ -85,22 +91,22 @@ class ExtFiasAddrComponent(BaseExtContainer):
 
         # Установка высоты - самый главный хак в этом коде!
         if self.view_mode == ExtFiasAddrComponent.VIEW_1:
-            self.height = 25
+            self.height = ExtFiasAddrComponent.TOTAL_FIELD_HEIGHT
         elif self.view_mode == ExtFiasAddrComponent.VIEW_2:
             if self.level >= ExtFiasAddrComponent.STREET:
-                self.height = 25*2
+                self.height = ExtFiasAddrComponent.TOTAL_FIELD_HEIGHT*2
             else:
-                self.height = 25
+                self.height = ExtFiasAddrComponent.TOTAL_FIELD_HEIGHT
         elif self.view_mode == ExtFiasAddrComponent.VIEW_3:
             if self.level > ExtFiasAddrComponent.HOUSE:
-                self.height = 25*3
+                self.height = ExtFiasAddrComponent.TOTAL_FIELD_HEIGHT*3
             else:
                 if self.level > ExtFiasAddrComponent.STREET:
-                    self.height = 25*2
+                    self.height = ExtFiasAddrComponent.TOTAL_FIELD_HEIGHT*2
                 else:
-                    self.height = 25
+                    self.height = ExtFiasAddrComponent.TOTAL_FIELD_HEIGHT
         if self.addr_visible:
-            self.height += 36+7
+            self.height += ExtFiasAddrComponent.ADDR_FIELD
 
         self.init_component(*args, **kwargs)
 
