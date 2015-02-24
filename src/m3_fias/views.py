@@ -74,8 +74,8 @@ def houses_proxy_view(request):
     u"""Запрос списка домов."""
     cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, request.body))
     data = cache.get(cache_key)
-
-    if not request.POST.get('street'):
+    street = request.POST.get('street')
+    if not street:
         return HttpResponse(
             json.dumps({
                 'rows': [],
@@ -86,8 +86,6 @@ def houses_proxy_view(request):
         )
 
     if data is None:
-        street = request.POST.get('street')
-
         data = {
             'search': request.POST.get('part'),
         }
@@ -121,4 +119,3 @@ def houses_proxy_view(request):
 
 def controller_view(request):
     return fias_controller.process_request(request)
-
