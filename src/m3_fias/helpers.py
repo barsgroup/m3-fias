@@ -34,9 +34,14 @@ def get_ao_object(guid):
     address_object = FiasAddressObject.create(guid)
     result = {}
     if address_object is not None:
+        # Для все уровней, кроме Регион и Автономный округ,
+        # выводим полный адрес
         name = (u'{0}. {1}'.format(
-            address_object.short_name, address_object.formal_name) if
-            address_object.level != address_object.LEVEL_PLACE else address_object.address)
+            address_object.short_name, address_object.formal_name)
+            if address_object.level in [
+                address_object.LEVEL_REGION,
+                address_object.LEVEL_AUTONOMOUS_DISTRICT]
+            else address_object.address)
         result = {
             'ao_guid': address_object.guid,
             'ao_level': address_object.level,
