@@ -31,16 +31,22 @@ class FiasServerError(IOError):
 
 
 def get_ao_object(guid):
+    """Подготовка данных для стора контрола на клиенте
+    Для уровней "регион", "автономный округ", "улица" и "объект, подчиненный дополнительной территории"
+    показываем в поле только наименование объекта, для других полный адрес.
+    :param guid: идентификатор фиаса
+    :rtype: str
+    """
     address_object = FiasAddressObject.create(guid)
     result = {}
     if address_object is not None:
-        # Для все уровней, кроме Регион и Автономный округ,
-        # выводим полный адрес
         name = (u'{0}. {1}'.format(
             address_object.short_name, address_object.formal_name)
             if address_object.level in [
                 address_object.LEVEL_REGION,
-                address_object.LEVEL_AUTONOMOUS_DISTRICT]
+                address_object.LEVEL_AUTONOMOUS_DISTRICT,
+                address_object.LEVEL_STREET,
+                address_object.LEVEL_AT_SUBORDINATED_OBJECT]
             else address_object.address)
         result = {
             'ao_guid': address_object.guid,
