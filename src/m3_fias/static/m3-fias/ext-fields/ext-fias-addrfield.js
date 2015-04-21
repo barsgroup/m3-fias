@@ -172,6 +172,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 });
                 this.house.setValue(params.house_value);
                 this.house.getStore().baseParams.street = this.street.value;
+                this.house.getStore().baseParams.place = this.place.value;
                 this.house.param_label_width = params.house_label_width;
 
                 this.house_guid = new Ext.form.Hidden({
@@ -240,7 +241,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 conf.flex = flex;
             }else{
                 // установка фиксированной ширины
-                conf.width = conf.labelWidth + conf.labelPad + 
+                conf.width = conf.labelWidth + conf.labelPad +
                              (conf.items[0].width || 100);
             }
 
@@ -403,6 +404,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
     clearHouse: function (){
         if( this.house !== undefined){
             this.house.setValue('');
+            this.house_guid.setValue('');
             if(this.corps !== undefined){
                 this.corps.setValue('');
             }
@@ -616,6 +618,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             this.place.setValue('');
         }
         this.clearStreet();
+        this.clearHouse();
         this.fireEvent('change_place', this, val, data);
         if (this.addr_visible) {
             this.getNewAddr();
@@ -654,6 +657,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         if (!house) {
             store.baseParams.part = house_num;
             store.baseParams.street = this.street.getValue();
+            store.baseParams.place = this.place.getValue();
             store.load({
                 callback: function(records, options, success) {
                     if (success) {
@@ -706,6 +710,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
     },
     beforeHouseQuery: function (qe) {
         qe.combo.store.baseParams.street = this.street.getValue();
+        qe.combo.store.baseParams.place = this.place.getValue();
         this.fireEvent('before_query_house', this, qe);
     },
 });

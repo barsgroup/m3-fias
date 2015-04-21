@@ -56,11 +56,11 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self.flat_label_width = 55
 
         # Атрибуты, определяющие необходимость заполнения полей
-        self.place_allow_blank = True
-        self.street_allow_blank = True
-        self.house_allow_blank = True
-        self.corps_allow_blank = True
-        self.flat_allow_blank = True
+        self.place_allow_blank = kwargs.get('place_allow_blank', True)
+        self.street_allow_blank = kwargs.get('street_allow_blank', True)
+        self.house_allow_blank = kwargs.get('house_allow_blank', True)
+        self.corps_allow_blank = kwargs.get('corps_allow_blank', True)
+        self.flat_allow_blank = kwargs.get('flat_allow_blank', True)
 
         # Названия инвалидных классов
         self.invalid_class = self.INVALID_CLASS
@@ -169,7 +169,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
                                bool(self.place_allow_blank))
         self._put_params_value('street_value', self.street.value)
         self._put_params_value('street_allow_blank',
-                               bool(self.place_allow_blank))
+                               bool(self.street_allow_blank))
         self._put_params_value('house_value', escape_str(self.house.value))
         self._put_params_value('house_allow_blank', self.house_allow_blank)
         self._put_params_value('corps_value', escape_str(self.corps.value))

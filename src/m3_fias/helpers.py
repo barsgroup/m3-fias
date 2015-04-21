@@ -32,7 +32,8 @@ class FiasServerError(IOError):
 
 def get_ao_object(guid):
     """Подготовка данных для стора контрола на клиенте
-    Для уровней "регион", "автономный округ", "улица" и "объект, подчиненный дополнительной территории"
+    Для уровней "регион", "автономный округ", "улица" и "объект,
+    подчиненный дополнительной территории"
     показываем в поле только наименование объекта, для других полный адрес.
     :param guid: идентификатор фиаса
     :rtype: str
@@ -55,7 +56,21 @@ def get_ao_object(guid):
             'shortname': address_object.short_name,
             'formal_name': address_object.formal_name,
             'name': name,
+            'postal_code': address_object.postcode
         }
+        # см ext-fias-addrfield.js generateTextAddr()
+        if address_object.level in [address_object.LEVEL_PLACE, ]:
+            district = address_object.parent
+            region = district.parent
+            if region is not None:
+                result['place_address'] = u', '.join((
+                    u''.join((region.short_name, u'. ',
+                              region.formal_name)),
+                    u''.join((district.short_name, u'. ',
+                              district.formal_name)),
+                    u''.join((address_object.short_name, u'. ',
+                              address_object.formal_name)),
+                ))
 
     return result
 
