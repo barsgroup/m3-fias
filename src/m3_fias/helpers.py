@@ -30,6 +30,13 @@ class FiasServerError(IOError):
         self.response = response
 
 
+def get_verbose_name(address_object):
+    """Возвращает имя нас. пункта в формате: г. Москва
+    :param address_object: объект FiasAddressObject
+    """
+    return u'{0}. {1}'.format(address_object.short_name,
+                              address_object.formal_name)
+
 def get_ao_object(guid):
     """Подготовка данных для стора контрола на клиенте
     Для уровней "регион", "автономный округ", "улица" и "объект,
@@ -58,19 +65,15 @@ def get_ao_object(guid):
             'name': name,
             'postal_code': address_object.postcode
         }
-        # см ext-fias-addrfield.js generateTextAddr()
-        if address_object.level in [address_object.LEVEL_PLACE, ]:
+
+        list_parent = [get_verbose_name(address_object)]
+        if address_object.parent:
             district = address_object.parent
-            region = district.parent
-            if region is not None:
-                result['place_address'] = u', '.join((
-                    u''.join((region.short_name, u'. ',
-                              region.formal_name)),
-                    u''.join((district.short_name, u'. ',
-                              district.formal_name)),
-                    u''.join((address_object.short_name, u'. ',
-                              address_object.formal_name)),
-                ))
+            list_parent.insert(0, get_verbose_name(district))
+            if district.parent:
+                region = district.parent
+                list_parent.insert(0, get_verbose_name(region))
+        result['place_address'] = u', '.join(list_parent)
 
     return result
 

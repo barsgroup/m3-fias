@@ -570,10 +570,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         var addr_text = '';
 
         if(Ext.isObject(place)){
-            if (place.ao_level == 6)  // населенный пункт
-                addr_text = place.place_address;
-            else
-                addr_text = place.shortname + '. ' + place.formal_name;
+            addr_text = place.place_address;
         }
 
         if (Ext.isObject(street)){
