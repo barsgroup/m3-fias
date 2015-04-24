@@ -65,14 +65,15 @@ def get_ao_object(guid):
             'name': name,
             'postal_code': address_object.postcode
         }
-
-        list_parent = [get_verbose_name(address_object)]
+        list_parent = []
         if address_object.parent:
             district = address_object.parent
-            list_parent.insert(0, get_verbose_name(district))
             if district.parent:
                 region = district.parent
-                list_parent.insert(0, get_verbose_name(region))
+                list_parent.append(get_verbose_name(region))
+            list_parent.append(get_verbose_name(district))
+        list_parent.append(get_verbose_name(address_object))
+
         result['place_address'] = u', '.join(list_parent)
 
     return result
