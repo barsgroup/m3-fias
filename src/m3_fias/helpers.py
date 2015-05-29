@@ -262,7 +262,7 @@ class FiasAddressObject(object):
         """
         try:
             object_data = FiasAddressObject._get_object_data(guid)
-        except requests.ConnectionError:
+        except (requests.ConnectionError, FiasServerError):
             if generate_error:
                 raise
             else:
