@@ -72,7 +72,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             width: 55,
             maskRe: /[0-9]/
         });
-        this.zipcode.param_label_width = 1;
+        this.zipcode.param_label_width = params.zipcode_label_width;
 
         if (params.level > 1) {
             var street_store = new Ext.data.JsonStore({
