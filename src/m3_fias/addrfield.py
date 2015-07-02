@@ -50,6 +50,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self.addr_label = u'Адрес'
 
         # Ширина меток
+        self.zipcode_label_width = 1
         self.street_label_width = 45
         self.house_label_width = 27
         self.corps_label_width = 45
@@ -137,6 +138,8 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self._put_params_value('corps_label', self.corps_label)
         self._put_params_value('flat_label', self.flat_label)
         self._put_params_value('addr_label', self.addr_label)
+        self._put_params_value('zipcode_label_width',
+                               self.zipcode_label_width)
         self._put_params_value('street_label_width', self.street_label_width)
         self._put_params_value('house_label_width', self.house_label_width)
         self._put_params_value('corps_label_width', self.corps_label_width)

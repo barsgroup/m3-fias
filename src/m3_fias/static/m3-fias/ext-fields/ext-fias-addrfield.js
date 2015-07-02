@@ -72,6 +72,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             width: 55,
             maskRe: /[0-9]/
         });
+        this.zipcode.param_label_width = params.zipcode_label_width;
 
         if (params.level > 1) {
             var street_store = new Ext.data.JsonStore({
@@ -248,8 +249,6 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             return Ext.apply(conf, extraconf || {});
         }
 
-
-
         if (params.view_mode == 1) {
             var row_items;
             // В одну строку
@@ -293,7 +292,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     xtype: 'compositefield',
                     anchor: '100%',
                     fieldLabel: params.place_label,
-                    items: [this.place, this.zipcode],
+                    items: [this.place, formed(this.zipcode)],
                     invalidClass: params.invalid_composite_field_class
                 };
                 items.push(row, this.row_spacer);
