@@ -72,7 +72,6 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             width: 55,
             maskRe: /[0-9]/
         });
-        this.zipcode.param_label_width = params.house_label_width;
         this.zipcode.param_label_width = 1;
 
         if (params.level > 1) {
