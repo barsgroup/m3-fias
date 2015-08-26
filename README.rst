@@ -25,7 +25,7 @@ m3-fias
 
 1. Добавить ``m3_fias.demo`` в ``INSTALLED_APPS``.
 2. Заменить ``workspace`` в ``views.py`` на ``fias_workspace.html``.
-3. Указать в ``settings.py`` параметр ``FIAS_API_URL`` с адресом rest-сервиса ФИАС (django-rest-fias, ``https://bitbucket.org/barsgroup/django-rest-fias``) (на данный момент можно использовать ``http://93.170.52.197:8000/fias/v1/ao/``.
+3. Указать в ``settings.py`` параметр ``FIAS_API_URL`` с адресом rest-сервиса ФИАС (django-rest-fias, ``https://bitbucket.org/barsgroup/django-rest-fias``) (на данный момент можно использовать ``http://fias.bars-open.ru/fias/v1/ao/``.
 
 Переход с m3-kladr
 ------------------
