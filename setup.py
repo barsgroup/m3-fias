@@ -7,7 +7,7 @@ with open('src/requirements.txt', 'r') as f:
 
 setup(
     name='m3-fias',
-    version='0.2.0.13',
+    version='0.2.0.14',
     url='https://bitbucket.org/barsgroup/m3-fias',
     license='MIT',
     author='BARS Group',
