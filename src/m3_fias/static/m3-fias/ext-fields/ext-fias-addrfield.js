@@ -401,9 +401,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         }
     },
     clearHouse: function (){
-        if( this.house !== undefined){
+        if(this.house !== undefined){
             this.house.setValue('');
-            this.house_guid.setValue('');
+            if (this.house_guid !== undefined){
+                this.house_guid.setValue('');
+            }
             if(this.corps !== undefined){
                 this.corps.setValue('');
             }
