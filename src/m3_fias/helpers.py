@@ -1,6 +1,7 @@
 # coding: utf-8
 from itertools import islice
 import datetime
+import json
 import os
 import re
 import uuid
@@ -12,6 +13,16 @@ from django.core.validators import RegexValidator
 from django.db.models import Q
 from django.utils.functional import cached_property
 import requests
+
+# параметры кеширования данных ФИАС
+_CACHE_KEY_PREFIX = 'm3-fias'
+if hasattr(settings, 'FIAS_CACHE_PREFIX') and settings.FIAS_CACHE_PREFIX:
+    _CACHE_KEY_PREFIX = settings.FIAS_CACHE_PREFIX
+
+# таймаут кеширования, по умолчанию 1 сутки
+_CACHE_TIMEOUT = 24 * 60 * 60
+if hasattr(settings, 'FIAS_CACHE_TIMEOUT') and settings.FIAS_CACHE_TIMEOUT:
+    _CACHE_TIMEOUT = settings.FIAS_CACHE_TIMEOUT
 
 
 # сессия для доступа к серверу ФИАС по HTTP/1.1
@@ -100,11 +111,6 @@ def kladr2fias(kladr_code, generate_error=False):
         else:
             return u''
 
-    cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, kladr_code))
-    fias_code = cache.get(cache_key)
-    if fias_code is not None:
-        return fias_code
-
     response = get_fias_service(
         '',
         {'code': kladr_code, 'view': 'simple'}
@@ -116,8 +122,6 @@ def kladr2fias(kladr_code, generate_error=False):
             fias_code = u''
         else:
             fias_code = data['results'][0]['aoguid']
-
-        cache.set(cache_key, fias_code, FiasAddressObject._CACHE_TIMEOUT)
         return fias_code
     else:
         if generate_error:
@@ -148,15 +152,6 @@ class FiasAddressObject(object):
     LEVEL_ADDITIONAL_TERRITORY = 90
     # объект, подчиненный дополнительной территории
     LEVEL_AT_SUBORDINATED_OBJECT = 91
-
-    # параметры кеширования данных ФИАС
-    _CACHE_KEY_PREFIX = 'm3-fias'
-    if hasattr(settings, 'FIAS_CACHE_PREFIX') and settings.FIAS_CACHE_PREFIX:
-        _CACHE_KEY_PREFIX = settings.FIAS_CACHE_PREFIX
-    # таймаут кеширования, по умолчанию 1 сутки
-    _CACHE_TIMEOUT = 24 * 60 * 60
-    if hasattr(settings, 'FIAS_CACHE_TIMEOUT') and settings.FIAS_CACHE_TIMEOUT:
-        _CACHE_TIMEOUT = settings.FIAS_CACHE_TIMEOUT
 
     # Уровень адресного объекта
     level = None
@@ -195,11 +190,6 @@ class FiasAddressObject(object):
     def _get_object_data(guid):
         """Загрузка данных с сервера ФИАС. Загружаемые данные кешируются.
         """
-        cache_key = ':'.join((FiasAddressObject._CACHE_KEY_PREFIX, guid))
-        result = cache.get(cache_key)
-        if result is not None:
-            return result
-
         response = get_fias_service(
             guid + '/'
         )
@@ -210,8 +200,6 @@ class FiasAddressObject(object):
             result = None
         else:
             raise FiasServerError(response=response)
-
-        cache.set(cache_key, result, FiasAddressObject._CACHE_TIMEOUT)
 
         return result
 
@@ -301,6 +289,11 @@ fias_field_validator = RegexValidator(
 def get_fias_service(url='', params=None):
     u""" Запрос к rest-сервису ФИАС
     """
+    cache_key = ':'.join((_CACHE_KEY_PREFIX, url, json.dumps(params)))
+    resp = cache.get(cache_key)
+    if resp is not None:
+        return resp
+
     global fias_server_session
     if fias_server_session is None:
         if hasattr(settings, 'FIAS_OAUTH2'):
@@ -328,6 +321,9 @@ def get_fias_service(url='', params=None):
         params=params,
         headers={'Content-Type': 'application/json'}
     )
+
+    cache.set(cache_key, resp, _CACHE_TIMEOUT)
+
     return resp
 
 
