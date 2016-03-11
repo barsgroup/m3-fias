@@ -11,6 +11,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db.models import Q
+from django.http import HttpResponse
 from django.utils.functional import cached_property
 import requests
 
@@ -387,3 +388,25 @@ def translate_kladr_codes(query, field_names, clean_invalid=False,
 
             if changed:
                 obj.save()
+
+
+def get_response(data, result):
+    u"""Возвращает объект HttpResponse, с результатом запроса к ФИАС.
+
+    Если запрос к ФИАС выполнился успешно, то вернет объект со свойствами
+    content_type и status_code и результатом, если нет, то вернет с пустым
+    результатом.
+
+    :param dict data: Словарь с данными ответа от ФИАС.
+    :param dict result: Словарь, готовый к передаче ответ.
+
+    :rtype HttpResponse.
+    """
+    if data.get('Content-Type'):
+        return HttpResponse(
+            json.dumps(result),
+            content_type=data['Content-Type'],
+            status=data['status_code']
+        )
+    else:
+        return HttpResponse(json.dumps(result))
