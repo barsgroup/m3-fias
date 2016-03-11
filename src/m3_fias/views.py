@@ -1,8 +1,6 @@
-#coding: utf-8
-import json
-from django.http import HttpResponse
-from m3_fias.helpers import FiasAddressObject, get_fias_service, get_ao_object
+# coding: utf-8
 from m3_fias.demo.app_meta import fias_controller
+from m3_fias.helpers import get_fias_service, get_ao_object, get_response
 
 # Признак успешности выполнения запроса
 STATUS_CODE_OK = 200
@@ -27,19 +25,15 @@ def address_proxy_view(request):
         data['status_code'] = resp.status_code
         data['Content-Type'] = resp.headers['Content-Type']
 
-    for obj in data['results']:
+    for obj in data.get('results', []):
         obj.update(get_ao_object(obj['aoguid']))
 
     result = {
-        'rows': data['results'],
-        'total': data['count'],
+        'rows': data.get('results', []),
+        'total': data.get('count', 0),
     }
 
-    return HttpResponse(
-        json.dumps(result),
-        content_type=data['Content-Type'],
-        status=data['status_code']
-    )
+    return get_response(data, result)
 
 
 def houses_proxy_view(request):
@@ -50,7 +44,7 @@ def houses_proxy_view(request):
     data = {
         'search': request.POST.get('part'),
     }
-    address_object = street if street else place
+    address_object = street or place or ''
 
     resp = get_fias_service(
         address_object + '/houses/',
@@ -69,14 +63,8 @@ def houses_proxy_view(request):
         'rows': data.get('results', []),
         'total': data.get('count', 0),
     }
-    if data.get('Content-Type'):
-        return HttpResponse(
-            json.dumps(result),
-            content_type=data['Content-Type'],
-            status=data['status_code']
-        )
-    else:
-        return HttpResponse(json.dumps(result))
+
+    return get_response(data, result)
 
 
 def controller_view(request):
