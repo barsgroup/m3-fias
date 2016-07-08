@@ -1,8 +1,9 @@
-#coding: utf-8
+# coding: utf-8
 from m3_ext.ui.fields.simple import ExtStringField
 from m3_fias.addrfield import ExtFiasAddrComponent
-from objectpack import ObjectPack
+from objectpack.actions import ObjectPack
 from objectpack.ui import BaseEditWindow
+
 from m3_fias.demo.models import Residence
 
 
