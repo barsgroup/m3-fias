@@ -21,9 +21,9 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 {name: 'formal_name'},
                 {name: 'name'},
                 {name: 'place_address'}
-            ],
+            ]
         });
-        place_store.baseParams['levels'] = [1, 4, 6];
+        place_store.baseParams['levels'] = [1, 4, 6, 90];
 
         if (params.place_record != '' && params.place_record != undefined) {
             var rec = Ext.util.JSON.decode(params.place_record);
@@ -94,7 +94,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 }
             });
 
-            street_store.baseParams['levels'] = 7;
+            street_store.baseParams['levels'] = [7, 91];
             if (params.street_record != '' && params.street_record != undefined) {
                 var rec = Ext.util.JSON.decode(params.street_record);
                 street_store.loadData({
