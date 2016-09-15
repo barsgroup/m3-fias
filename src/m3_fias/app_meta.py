@@ -1,21 +1,29 @@
-#coding: utf-8
+# coding: utf-8
 from django.conf.urls import url
-try:
-    # для django 1.3
-    from django.conf.urls.defaults import patterns
-except ImportError:
-    # для django > 1.3
-    from django.conf.urls import patterns
+
+from .views import address_proxy_view
+from .views import controller_view
+from .views import houses_proxy_view
+
 
 def register_actions():
     pass
 
 
 def register_urlpatterns():
-    return patterns('',
-        url(r'^fias/remote/list/houses$', 'm3_fias.views.houses_proxy_view',
-            name='houses_proxy_view'),
-        url(r'^fias/remote/search$', 'm3_fias.views.address_proxy_view',
-            name='address_proxy_view'),
-        (r'^fias/', 'm3_fias.views.controller_view')
-    )
+    return [
+        url(
+            r'^fias/remote/list/houses$',
+            houses_proxy_view,
+            name='houses_proxy_view'
+        ),
+        url(
+            r'^fias/remote/search$',
+            address_proxy_view,
+            name='address_proxy_view'
+        ),
+        url(
+            r'^fias/',
+            controller_view
+        )
+    ]
