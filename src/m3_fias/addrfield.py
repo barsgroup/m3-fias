@@ -63,6 +63,10 @@ class ExtFiasAddrComponent(BaseExtContainer):
         self.corps_allow_blank = kwargs.get('corps_allow_blank', True)
         self.flat_allow_blank = kwargs.get('flat_allow_blank', True)
 
+        # Указывает на возможность редактирования полей индекса и
+        # полного адреса
+        self.can_edit_addr = kwargs.get('can_edit_addr', True)
+
         # Названия инвалидных классов
         self.invalid_class = self.INVALID_CLASS
         self.invalid_composite_field_class = self.INVALID_COMPOSITE_FIELD_CLASS
@@ -126,6 +130,7 @@ class ExtFiasAddrComponent(BaseExtContainer):
 
         super(ExtFiasAddrComponent, self).render_params()
         self._put_params_value('place_field_name', self.place_field_name)
+        self._put_params_value('can_edit_addr', bool(self.can_edit_addr))
         self._put_params_value('street_field_name', self.street_field_name)
         self._put_params_value('house_field_name', self.house_field_name)
         self._put_params_value('corps_field_name', self.corps_field_name)

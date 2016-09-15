@@ -72,8 +72,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
             width: 55,
             maskRe: /[0-9]/
         });
+        if (params.can_edit_addr === false){
+            this.zipcode.readOnly=true;
+        }
         this.zipcode.param_label_width = params.zipcode_label_width;
-
+        this.can_edit_addr = params.can_edit_addr;
         if (params.level > 1) {
             var street_store = new Ext.data.JsonStore({
                 url: params.fias_api_url + '/search',
@@ -702,7 +705,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
         this.fireEvent('before_query_place', this, qe);
     },
     onDblClickAddr: function (qe) {
-        if (this.addr_visible) {
+        if (this.addr_visible && this.can_edit_addr) {
             this.addr.setReadOnly(false);
         }
     },
