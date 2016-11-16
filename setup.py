@@ -15,8 +15,7 @@ def _get_requirements(file_name):
 
 def _read(fname):
     try:
-        return open(os.path.join(os.path.dirname(__file__),
-            fname)).read()
+        return open(os.path.join(os.path.dirname(__file__), fname)).read()
     except IOError:
         return ''
 
