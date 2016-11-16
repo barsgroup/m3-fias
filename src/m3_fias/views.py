@@ -1,6 +1,8 @@
 # coding: utf-8
 from m3_fias.demo.app_meta import fias_controller
-from m3_fias.helpers import get_fias_service, get_ao_object, get_response
+from m3_fias.helpers import get_fias_service
+from m3_fias.helpers import get_response
+from m3_fias.helpers import extend_addresses
 
 # Признак успешности выполнения запроса
 STATUS_CODE_OK = 200
@@ -25,12 +27,12 @@ def address_proxy_view(request):
         data['status_code'] = resp.status_code
         data['Content-Type'] = resp.headers['Content-Type']
 
-    for obj in data.get('results', []):
-        obj.update(get_ao_object(obj['aoguid']))
+    rows = list(extend_addresses(data.get('results', [])))
+    total = len(rows)
 
     result = {
-        'rows': data.get('results', []),
-        'total': data.get('count', 0),
+        'rows': rows,
+        'total': total,
     }
 
     return get_response(data, result)

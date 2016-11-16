@@ -91,6 +91,23 @@ def get_ao_object(guid):
     return result
 
 
+def extend_addresses(addresses):
+    u"""Генератор адресных объектов с детальной информацией.
+
+    Принимает набор адресных объектов и расширяет их дополнительной
+    информацией.
+    Если получить дополнительную информацию для адресного объекта не
+    удалось, то он не будет отдан клиенту.
+    """
+
+    for address in addresses:
+        ao_object = get_ao_object(address['aoguid'])
+
+        if ao_object is not None:
+            address.update(ao_object)
+            yield address
+
+
 def kladr2fias(kladr_code, generate_error=False):
     """Конвертация кода КЛАДР в код ФИАС.
 
@@ -323,7 +340,9 @@ def get_fias_service(url='', params=None):
         headers={'Content-Type': 'application/json'}
     )
 
-    cache.set(cache_key, resp, _CACHE_TIMEOUT)
+    # Сохранять в кэш только ответы на запросы, завершившиеся успешно.
+    if resp.status_code == 200:
+        cache.set(cache_key, resp, _CACHE_TIMEOUT)
 
     return resp
 
