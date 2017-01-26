@@ -172,7 +172,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                     valueField: 'house_number',
                     mode: 'remote',
                     hiddenName: params.house_field_name,
-                    invalidClass: params.invalid_class
+                    invalidClass: params.invalid_class,
+                    maskRe: /\S/,
+                    maxLength: 12,
+                    regex: /^\S{0,12}$/,
+                    autoCreate: {tag: 'input', type: 'text', maxlength: '12'}
                 });
                 this.house.setValue(params.house_value);
                 this.house.getStore().baseParams.street = this.street.value;
@@ -195,7 +199,11 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                         value: params.corps_value,
                         emptyText: '',
                         width: 40,
-                        invalidClass: params.invalid_class
+                        invalidClass: params.invalid_class,
+                        maxLength: 12,
+                        maskRe: /\S/,
+                        regex: /^\S{0,12}$/,
+                    autoCreate: {tag: 'input', type: 'text', maxlength: '12'}
                     });
                     this.corps.param_label_width = params.corps_label_width;
                 }
@@ -209,7 +217,10 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                         cls: field_cls,
                         emptyText: '',
                         width: 40,
-                        invalidClass: params.invalid_class
+                        invalidClass: params.invalid_class,
+                        maskRe: /\S/,
+                        regex: /^\S{0,12}$/,
+                        autoCreate: {tag: 'input', type: 'text', maxlength: '12'}
                     });
                     this.flat.param_label_width = params.flat_label_width;
                 }
@@ -224,6 +235,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 value: params.addr_value,
                 readOnly: true,
                 cls: field_cls,
+                regex: /^(\S|(\S \S))*$/,
                 height: 36
             });
         }
