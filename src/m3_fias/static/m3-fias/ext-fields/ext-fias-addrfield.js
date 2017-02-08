@@ -235,7 +235,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 value: params.addr_value,
                 readOnly: true,
                 cls: field_cls,
-                regex: /^(\S|(\S \S))*$/,
+                regex: /^(\S*|\S+ (\S+ )*\S+)$/,
                 height: 36
             });
         }
