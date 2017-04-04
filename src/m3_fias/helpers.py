@@ -49,6 +49,7 @@ def get_verbose_name(address_object):
     return u'{0}. {1}'.format(address_object.short_name,
                               address_object.formal_name)
 
+
 def get_ao_object(guid):
     """Подготовка данных для стора контрола на клиенте
     Для уровней "регион", "автономный округ", "улица" и "объект,
@@ -322,7 +323,7 @@ def get_fias_service(url='', params=None):
             fias_server_session = OAuth2Session(
                 client=LegacyApplicationClient(settings.FIAS_OAUTH2['CLIENT_ID'])
             )
-            fias_server_session.trust_env = False
+            fias_server_session.trust_env = True
             fias_server_session.fetch_token(
                 token_url=settings.FIAS_OAUTH2['TOKEN_URL'],
                 username=settings.FIAS_OAUTH2['USERNAME'],
@@ -332,7 +333,7 @@ def get_fias_service(url='', params=None):
             )
         else:
             fias_server_session = requests.Session()
-            fias_server_session.trust_env = False
+            fias_server_session.trust_env = True
 
     resp = fias_server_session.get(
         settings.FIAS_API_URL + url,
