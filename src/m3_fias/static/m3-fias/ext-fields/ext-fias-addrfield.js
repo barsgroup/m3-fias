@@ -23,7 +23,7 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 {name: 'place_address'}
             ]
         });
-        place_store.baseParams['levels'] = [1, 4, 6, 90];
+        place_store.baseParams['levels'] = [1, 2, 3, 4, 5, 6, 65, 90];
 
         if (params.place_record != '' && params.place_record != undefined) {
             var rec = Ext.util.JSON.decode(params.place_record);
