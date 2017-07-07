@@ -1,4 +1,0 @@
-requests>=1.0.0
-m3-core>=2.0.10.2
-m3-ui>=2.0.6.6
-m3-objectpack>=2.0.0
