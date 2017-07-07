@@ -15,6 +15,13 @@ class Config(object):
         :rtype: :class:`m3.actions.ActionController`
         """
 
+    @abc.abstractproperty
+    def backend(self):
+        u"""Бэкенд для доступа к данным ФИАС.
+
+        :rtype: :class:`m3_fias.backends.base.BackendBase`
+        """
+
 
 #: Конфигурация приложения ``m3_fias``.
 config = None
