@@ -16,14 +16,17 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import sys
+
+from os.path import abspath
 from os.path import join
 from os.path import dirname
 
 import sphinx_rtd_theme
 
+DOCS_DIR = dirname(dirname(abspath(__file__)))
+sys.path.insert(0, join(DOCS_DIR, '_ext'))
+sys.path.insert(0, join(dirname(DOCS_DIR), 'src'))
 
 # -- General configuration ------------------------------------------------
 
@@ -37,10 +40,13 @@ import sphinx_rtd_theme
 extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
+    'sphinx.ext.autodoc',
+    'djangodocs',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = [
+]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -102,7 +108,6 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [
-    '_static',
 ]
 
 # Custom sidebar templates, must be a dictionary that maps document names
@@ -132,10 +137,10 @@ htmlhelp_basename = 'm3-fiasdoc'
 intersphinx_mapping = {
     'python': (
         'https://docs.python.org/2.7',
-        '../_inv/python.inv'
+        join(DOCS_DIR, '_inv', 'python.inv')
     ),
     'django': (
-        'http://docs.djangoproject.com/en/1.10/',
-        '../_inv/django.inv'
+        'http://docs.djangoproject.com/en/1.11/',
+        join(DOCS_DIR, '_inv', 'django.inv')
     ),
 }
