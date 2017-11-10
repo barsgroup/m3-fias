@@ -1,0 +1,21 @@
+{% extends 'm3_workspace.html' %}
+{% load static from staticfiles %}
+
+{% block content_head %}
+    {{ block.super }}
+    <!-- m3-fias -->
+    <script type='text/javascript' src='{% static "m3/js/fias/AddressPanel.js" %}'></script>
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    <script type='text/javascript'>
+        Ext.onReady(function() {
+            // Открытие тестового окна.
+            var module = AppDesktop.modules.find(function(element) {
+                return element.launcher.text == 'Тестовое окно';
+            });
+            module.launcher.handler();
+        });
+    </script>
+{% endblock %}}
