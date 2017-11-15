@@ -1,4 +1,4 @@
 graft src
 include README.rst
 include version.conf
-include requirements.txt
+include requirements/_base.txt requirements/prod.txt

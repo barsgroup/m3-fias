@@ -1,0 +1,268 @@
+{
+    "results": [
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "33", 
+            "buildnum": null, 
+            "houseid": "6b90b101-3b92-4010-86ac-0a0e78ade234", 
+            "houseguid": "6b90b101-3b92-4010-86ac-0a0e78ade234"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "А", 
+            "housenum": "4", 
+            "buildnum": null, 
+            "houseid": "26355440-c317-4f6f-9a30-17206265d960", 
+            "houseguid": "e3e8946e-d726-4320-81b8-f4df6723f3d6"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "А", 
+            "housenum": "3", 
+            "buildnum": null, 
+            "houseid": "5056e4b2-3223-434a-96de-3490779773ec", 
+            "houseguid": "a7848958-6ec7-4710-8367-619befd86d22"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "Д", 
+            "housenum": "8", 
+            "buildnum": null, 
+            "houseid": "0f085ddb-c3f4-4c3a-9cf8-37e0e4587656", 
+            "houseguid": "10c449f5-8be1-4f22-9a45-198d0521117f"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "12", 
+            "buildnum": null, 
+            "houseid": "0dfdb214-7761-4a14-8b88-448da10f6e09", 
+            "houseguid": "cf517153-ccb2-4164-ae2d-0326cab96927"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "6", 
+            "buildnum": null, 
+            "houseid": "7d35dd98-0c14-4f4e-acdc-640f63b1d59c", 
+            "houseguid": "fc10f197-5af9-48b6-9efb-576fb5c0b60f"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "10", 
+            "buildnum": null, 
+            "houseid": "99f26e43-e8d0-49d2-bbc2-7a6ce55a4263", 
+            "houseguid": "8186e081-4ebf-46f2-ba95-f7744858ce25"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "А", 
+            "housenum": "1", 
+            "buildnum": null, 
+            "houseid": "7b59e7d0-dfee-481a-92fd-7a1bdb8e0f51", 
+            "houseguid": "2be7dbb0-fa53-4829-8d13-f42940d5aac7"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "1Б", 
+            "buildnum": null, 
+            "houseid": "d30ade65-18fb-49dd-86f6-67e2e07a0e2f", 
+            "houseguid": "d30ade65-18fb-49dd-86f6-67e2e07a0e2f"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "9", 
+            "buildnum": null, 
+            "houseid": "b5d68a21-dae0-456c-9307-5854312e0db9", 
+            "houseguid": "9864e6ff-6bef-45e2-bbaa-2d8e647427c6"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "Г", 
+            "housenum": "8", 
+            "buildnum": null, 
+            "houseid": "bbfee960-69de-4547-a006-6b5ca873ab5e", 
+            "houseguid": "18d0be8c-8142-4ee6-8718-4a9660d604b8"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "6Б", 
+            "buildnum": null, 
+            "houseid": "fb0242c4-baff-4180-a891-6d61b7d6e4f7", 
+            "houseguid": "cd4e42a8-a745-48a7-9fea-798e4966a1a2"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "16", 
+            "buildnum": null, 
+            "houseid": "df599e4a-9d60-4eda-8be1-93281e530cb8", 
+            "houseguid": "c4d21d0e-10a2-4e48-b579-24c09b8958f2"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "11", 
+            "buildnum": null, 
+            "houseid": "cb1c1c08-fb0f-4828-a2e1-71a8f0656241", 
+            "houseguid": "cb1c1c08-fb0f-4828-a2e1-71a8f0656241"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "Б", 
+            "housenum": "4", 
+            "buildnum": null, 
+            "houseid": "8b0c27a5-5764-44ea-95af-8a90e0976d15", 
+            "houseguid": "30db29ac-afdc-4e6f-ba30-7bc848e64cb7"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "2", 
+            "buildnum": null, 
+            "houseid": "a2bc62a0-f938-4118-bc24-d24ea856d9cb", 
+            "houseguid": "f7b74bd1-07b2-486b-b9a6-aefa159413a3"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "В", 
+            "housenum": "8", 
+            "buildnum": null, 
+            "houseid": "091f8914-700c-4809-984b-9937a8b708ee", 
+            "houseguid": "9cce64a5-0680-41d9-89da-3d156a6f8c1c"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "Б", 
+            "housenum": "2", 
+            "buildnum": null, 
+            "houseid": "5df0ec2c-4337-444e-b1a4-f7fffbb68f8e", 
+            "houseguid": "c51dbfe7-dc64-4f37-8fb5-5056261813b2"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": "А", 
+            "housenum": "2", 
+            "buildnum": null, 
+            "houseid": "e60b3e03-b683-4a9e-9152-f85eea4183f5", 
+            "houseguid": "04bb768e-7ea8-4f39-a913-10b4d9238e9c"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "4", 
+            "buildnum": null, 
+            "houseid": "480a1249-7aad-4089-ba9e-a0ba7588be87", 
+            "houseguid": "622fc8df-1414-40c1-985a-a5136a063aec"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "13", 
+            "buildnum": null, 
+            "houseid": "be0abe89-b1d7-4960-9723-a2b40ecb4402", 
+            "houseguid": "be0abe89-b1d7-4960-9723-a2b40ecb4402"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "1", 
+            "buildnum": "2", 
+            "houseid": "73fdcd59-3a9c-4c30-8687-a3bf4639ab65", 
+            "houseguid": "9df0f50b-451d-43f0-b6a2-c6d68e3c922f"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "3", 
+            "buildnum": null, 
+            "houseid": "7f5fbbc6-079a-422f-903c-c253820186a6", 
+            "houseguid": "a6b6b4de-f545-44dc-88db-c914d8f00340"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "14", 
+            "buildnum": null, 
+            "houseid": "300fef60-59d4-4c5c-b687-fe8b0c97811a", 
+            "houseguid": "3ef7ab10-c876-4e60-8bed-e04a958be64b"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "6А", 
+            "buildnum": null, 
+            "houseid": "8203f725-9706-493e-8936-c54b01a3e5da", 
+            "houseguid": "8203f725-9706-493e-8936-c54b01a3e5da"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "1", 
+            "buildnum": null, 
+            "houseid": "01d982db-bf64-467d-b7cc-de9bdef6966a", 
+            "houseguid": "74551f48-c056-40f6-aa53-ab366bf26f9f"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "18", 
+            "buildnum": null, 
+            "houseid": "6db15ac3-7e3b-4e4f-b513-ef0ae5eb9290", 
+            "houseguid": "33ee680d-f49d-4720-8998-d6dcaa341a3d"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "8", 
+            "buildnum": "2", 
+            "houseid": "b3e59dfa-51a9-44cc-8900-755789f345fd", 
+            "houseguid": "7ba06034-79d4-41e0-97f9-14d9fa56a50c"
+        }, 
+        {
+            "postalcode": 184230, 
+            "aoguid": "96c3bde4-c5c6-495a-9774-e7d21ee488c8", 
+            "strucnum": null, 
+            "housenum": "8", 
+            "buildnum": "1", 
+            "houseid": "2c4f6aa1-0fb3-4b1a-a5d4-d9f3c92f4d41", 
+            "houseguid": "d475a1ea-b642-46fb-a955-3dfe856a3bc6"
+        }
+    ], 
+    "count": 29, 
+    "previous": null, 
+    "next": null
+}
