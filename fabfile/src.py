@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from contextlib import nested
+from itertools import imap
 from os.path import join
 
 from fabric.api import local
@@ -21,11 +22,17 @@ def isort():
     with lcd(_settings.PROJECT_DIR):
         print green('isort', bold=True)
 
+        source_directories = (
+            _settings.SRC_DIR,
+            _settings.TESTS_DIR,
+            join(_settings.PROJECT_DIR, 'fabfile'),
+        )
         local(
-            "isort -rc '{SRC_DIR}' '{TESTS_DIR}'"
-            .format(
-                SRC_DIR=_settings.SRC_DIR,
-                TESTS_DIR=_settings.TESTS_DIR,
+            'isort --skip= --settings-path "{}" -rc {}'.format(
+                join(_settings.PROJECT_DIR, '.isort.cfg'),
+                ' '.join(
+                    imap(lambda s: '"{}"'.format(s), source_directories)
+                ),
             )
         )
 
