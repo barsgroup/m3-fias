@@ -7,6 +7,27 @@ from itertools import imap
 from pkg_resources import DistributionNotFound
 from pkg_resources import get_distribution
 
+from fabric.api import local
+
+
+# Параметры pip, общие для всех команд.
+common_pip_params = (
+    '--extra-index-url https://pypi.bars-open.ru/simple/',
+)
+
+
+def upgrade_base_packages():
+    """Обновляет пакеты pip и setuptools."""
+    local('pip install -U pip setuptools')
+
+
+def install_packages_from_file(file_path, quiet):
+    local('pip install{} {} -r {}'.format(
+        ' --quiet' if quiet else '',
+        ' '.join(common_pip_params),
+        file_path,
+    ))
+
 
 def is_package_installed(package):
     try:
@@ -26,7 +47,5 @@ def install_requirements(requirements_file, packages, quiet):
     :param list packages: список имен пакетов, при отсутствии которых в
         окружении будут установлены пакеты, перечисленные в указанном файле.
     """
-    from req import _install_packages_from_file
-
     if not all(imap(is_package_installed, packages)):
-        _install_packages_from_file(requirements_file, quiet)
+        install_packages_from_file(requirements_file, quiet)

@@ -8,25 +8,8 @@ from fabric.api import local
 from fabric.decorators import task
 
 from . import _settings
-
-
-# Параметры pip, общие для всех команд.
-_common_pip_params = (
-    '--extra-index-url https://pypi.bars-open.ru/simple/',
-)
-
-
-def _upgrade_base_packages():
-    """Обновляет пакеты pip и setuptools."""
-    local('pip install -U pip setuptools')
-
-
-def _install_packages_from_file(file_path, quiet):
-    local('pip install{} {} -r {}'.format(
-        ' --quiet' if quiet else '',
-        ' '.join(_common_pip_params),
-        file_path,
-    ))
+from ._utils import common_pip_params
+from ._utils import upgrade_base_packages
 
 
 @task
@@ -43,10 +26,10 @@ def delete():
 @task
 def prod():
     """Обновление списка зависимостей для production-среды."""
-    _upgrade_base_packages()
+    upgrade_base_packages()
 
     local('pip install {} -r {}'.format(
-        ' '.join(_common_pip_params),
+        ' '.join(common_pip_params),
         _settings.REQUIREMENTS_PROD,
     ))
 
@@ -54,10 +37,10 @@ def prod():
 @task
 def dev():
     """Обновление списка зависимостей для development-среды."""
-    _upgrade_base_packages()
+    upgrade_base_packages()
 
     local('pip install {} -r {}'.format(
-        ' '.join(_common_pip_params),
+        ' '.join(common_pip_params),
         _settings.REQUIREMENTS_DEV,
     ))
 
@@ -65,10 +48,10 @@ def dev():
 @task
 def test():
     """Обновление списка зависимостей для development-среды."""
-    _upgrade_base_packages()
+    upgrade_base_packages()
 
     local('pip install {} -r {}'.format(
-        ' '.join(_common_pip_params),
+        ' '.join(common_pip_params),
         _settings.REQUIREMENTS_TEST,
     ))
 
