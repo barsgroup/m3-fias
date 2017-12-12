@@ -79,4 +79,22 @@ FIAS_LEVELS = (
     FIAS_LEVEL_ADDITIONAL_TERRITORY,
     FIAS_LEVEL_ADDITIONAL_TERRITORY_OBJECT,
 )
+
+#: Уровни адресных объектов, относящихся к населенным пунктам.
+FIAS_LEVELS_PLACE = (
+    FIAS_LEVEL_REGION,
+    FIAS_LEVEL_AUTONOMUOS_DISTRICT,
+    FIAS_LEVEL_DISTRICT,
+    FIAS_LEVEL_CITY,
+    FIAS_LEVEL_INTRACITY_TERRITORY,
+    FIAS_LEVEL_SETTLEMENT,
+    FIAS_LEVEL_PLANNING_STRUCTURE,
+    FIAS_LEVEL_ADDITIONAL_TERRITORY,
+)
+
+# Уровни адресных объектов, относящимся к улицам.
+FIAS_LEVELS_STREET = (
+    FIAS_LEVEL_STREET,
+    FIAS_LEVEL_ADDITIONAL_TERRITORY_OBJECT,
+)
 # -----------------------------------------------------------------------------

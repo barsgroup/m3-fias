@@ -11,16 +11,8 @@ from itertools import imap
 from uuid import UUID
 import httplib
 
-from m3_fias.constants import FIAS_LEVEL_ADDITIONAL_TERRITORY
-from m3_fias.constants import FIAS_LEVEL_ADDITIONAL_TERRITORY_OBJECT
-from m3_fias.constants import FIAS_LEVEL_AUTONOMUOS_DISTRICT
-from m3_fias.constants import FIAS_LEVEL_CITY
-from m3_fias.constants import FIAS_LEVEL_DISTRICT
-from m3_fias.constants import FIAS_LEVEL_INTRACITY_TERRITORY
-from m3_fias.constants import FIAS_LEVEL_PLANNING_STRUCTURE
-from m3_fias.constants import FIAS_LEVEL_REGION
-from m3_fias.constants import FIAS_LEVEL_SETTLEMENT
-from m3_fias.constants import FIAS_LEVEL_STREET
+from m3_fias.constants import FIAS_LEVELS_PLACE
+from m3_fias.constants import FIAS_LEVELS_STREET
 from m3_fias.data import AddressObject
 from m3_fias.data import House
 from m3_fias.data import ObjectMapper
@@ -422,16 +414,7 @@ class PlaceLoader(AddressObjectLoaderBase):
           (:obj:`~m3_fias.constants.FIAS_LEVEL_ADDITIONAL_TERRITORY`).
     """
 
-    _levels = (
-        FIAS_LEVEL_REGION,
-        FIAS_LEVEL_AUTONOMUOS_DISTRICT,
-        FIAS_LEVEL_DISTRICT,
-        FIAS_LEVEL_CITY,
-        FIAS_LEVEL_INTRACITY_TERRITORY,
-        FIAS_LEVEL_SETTLEMENT,
-        FIAS_LEVEL_PLANNING_STRUCTURE,
-        FIAS_LEVEL_ADDITIONAL_TERRITORY,
-    )
+    _levels = FIAS_LEVELS_PLACE
 
     _mapper_class = UIAddressObjectMapper
 
@@ -450,10 +433,7 @@ class StreetLoader(AddressObjectLoaderBase):
           (:obj:`~m3_fias.constants.FIAS_LEVEL_ADDITIONAL_TERRITORY_OBJECT`).
     """
 
-    _levels = (
-        FIAS_LEVEL_STREET,
-        FIAS_LEVEL_ADDITIONAL_TERRITORY_OBJECT,
-    )
+    _levels = FIAS_LEVELS_STREET
 
     _mapper_class = UIAddressObjectMapper
 
