@@ -15,6 +15,7 @@ from .utils import HouseLoader
 from .utils import PlaceLoader
 from .utils import StreetLoader
 
+
 if django.VERSION < (1, 8):
     # Backport JsonResponse from Django 1.11
     import datetime

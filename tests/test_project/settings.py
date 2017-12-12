@@ -6,6 +6,7 @@ import os
 
 import django
 
+
 BASE_DIR = dirname(dirname(abspath(__file__)))
 
 SECRET_KEY = 'SECRET_KEY'

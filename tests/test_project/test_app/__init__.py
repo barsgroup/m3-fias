@@ -5,6 +5,7 @@ from BaseHTTPServer import HTTPServer
 from threading import Thread
 
 from django.conf import settings
+
 from django_rest_fias.server_mock import DjangoRestFiasServerMock
 from m3_fias.utils import cached_property
 from test_project.controllers import controller
