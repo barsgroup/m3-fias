@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from os.path import join
@@ -6,7 +7,7 @@ from os.path import join
 from fabric.api import local
 from fabric.decorators import task
 
-import _settings
+from . import _settings
 
 
 # Параметры pip, общие для всех команд.

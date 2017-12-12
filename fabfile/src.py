@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from contextlib import nested
@@ -13,7 +14,7 @@ from fabric.context_managers import shell_env
 from fabric.decorators import task
 from fabric.tasks import execute
 
-import _settings
+from . import _settings
 
 
 @task

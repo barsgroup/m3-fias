@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from os.path import join
@@ -8,11 +9,11 @@ from fabric.decorators import task
 from fabric.operations import local
 from fabric.tasks import execute
 
-import _settings
-import doc
-import req
-import src
-import tests
+from . import _settings
+from . import doc
+from . import req
+from . import src
+from . import tests
 
 
 @task

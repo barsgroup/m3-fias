@@ -1,17 +1,18 @@
 # coding: utf-8
 # pylint: disable=not-context-manager, relative-import
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from contextlib import nested
 import os
 
-from _utils import install_requirements
+from ._utils import install_requirements
 from fabric.api import local
 from fabric.context_managers import lcd
 from fabric.context_managers import settings
 from fabric.decorators import task
 
-import _settings
+from . import _settings
 
 
 @task
