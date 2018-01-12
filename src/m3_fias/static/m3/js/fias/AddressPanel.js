@@ -65,6 +65,8 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
 
         this.level = Ext.m3.fias.UI_LEVEL_FLAT;
 
+        this.zipCodeURL = null;
+
         Ext.m3.fias.AddressFields.superclass.constructor.call(this, config);
 
         this.addEvents(
@@ -519,6 +521,36 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         }
     },
 
+    /**
+     * Запрашивает у веб-приложения почтовый индекс адресного объекта или
+     * здания.
+     */
+    updateZipCodeFor: function(addressObjectGUID, houseGUID) {
+        if (!this.zipCodeURL)
+            return;
+
+        var params = {
+            address_object_guid: addressObjectGUID,
+        };
+        if (houseGUID) {
+            params.house_guid = houseGUID;
+        }
+
+        Ext.Ajax.request({
+            url: this.zipCodeURL,
+            params: params,
+            success: function(response, options) {
+                var data = Ext.decode(response.responseText);
+                if (data.zipCode) {
+                    this.zipCodeField.setValue(data.zipCode);
+                } else {
+                    this.clearZipCode();
+                }
+            },
+            scope: this
+        });
+    },
+
     onPlaceChange: function(field, newValue, oldValue) {
         if (newValue != oldValue) {
             this.suspend();
@@ -551,7 +583,8 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         this.placeNameField.selectedRecord = record;
         this.placeGUIDField.setValue(record.get('guid'));
 
-        this.zipCodeField.setValue(record.get('postalCode'));
+        // this.zipCodeField.setValue(record.get('postalCode'));
+        this.updateZipCodeFor(record.get('guid'));
         this.zipCodeField.valueSource = 'place';
 
         this.clearStreet();
@@ -597,7 +630,8 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         this.streetNameField.selectedRecord = record;
         this.streetGUIDField.setValue(record.get('guid'));
 
-        this.zipCodeField.setValue(record.get('postalCode'));
+        // this.zipCodeField.setValue(record.get('postalCode'));
+        this.updateZipCodeFor(record.get('guid'));
         this.zipCodeField.valueSource = 'street';
 
         this.clearHouse();
@@ -653,7 +687,8 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
 
         this.updateHouse(record);
 
-        this.zipCodeField.setValue(record.get('postalCode'));
+        // this.zipCodeField.setValue(record.get('postalCode'));
+        this.updateZipCodeFor(record.get('parentGUID'), record.get('guid'));
         this.zipCodeField.valueSource = 'house';
 
         this.updateFullAddress();

@@ -36,7 +36,6 @@ class UIAddressObjectMapper(ObjectMapper):
         'level': 'level',
         'shortName': 'short_name',
         'formalName': 'formal_name',
-        'postalCode': 'postal_code',
         'fullName': 'full_name',
     }
 
@@ -54,7 +53,6 @@ class UIHouseMapper(ObjectMapper):
         'houseNumber': 'house_number',
         'buildingNumber': 'building_number',
         'structureNumber': 'structure_number',
-        'postalCode': 'postal_code',
     }
 
 
@@ -164,7 +162,6 @@ class AddressFields(BaseExtComponent):
                 'guid',
                 'level',
                 'fullName',
-                'postalCode',
             ],
             store=ExtJsonStore(
                 url=self.backend.place_search_url,
@@ -225,7 +222,6 @@ class AddressFields(BaseExtComponent):
                 'guid',
                 'level',
                 'shortName',
-                'postalCode',
                 'formalName',
                 'name',  # значение поля формируется как shortName + formalName
             ],
@@ -271,10 +267,10 @@ class AddressFields(BaseExtComponent):
             list_width=150,
             fields=[
                 'guid',
+                'parentGUID',
                 'houseNumber',
                 'buildingNumber',
                 'structureNumber',
-                'postalCode',
             ],
             store=ExtJsonStore(
                 url=self.backend.house_search_url,
@@ -397,8 +393,11 @@ class AddressFields(BaseExtComponent):
 
         :rtype: m3_fias.data.AddressObject
         """
+        result = None
         if self.field__place_guid.value:
-            return get_address_object(self.field__place_guid.value)
+            result = get_address_object(self.field__place_guid.value)
+
+        return result
 
     @cached_property
     def street(self):
@@ -408,8 +407,11 @@ class AddressFields(BaseExtComponent):
         """
         assert self.level in (UI_LEVEL_STREET, UI_LEVEL_HOUSE, UI_LEVEL_FLAT)
 
+        result = None
         if self.field__street_guid.value:
-            return get_address_object(self.field__street_guid.value)
+            result = get_address_object(self.field__street_guid.value)
+
+        return result
 
     @cached_property
     def house(self):
@@ -419,6 +421,7 @@ class AddressFields(BaseExtComponent):
         """
         assert self.level in (UI_LEVEL_HOUSE, UI_LEVEL_FLAT)
 
+        result = None
         if (
             self.field__house_guid.value and
             (
@@ -426,13 +429,15 @@ class AddressFields(BaseExtComponent):
                 self.field__place_guid.value
             )
         ):
-            return get_house(
+            result = get_house(
                 guid=self.field__house_guid.value,
                 ao_guid=(
                     self.field__street_guid.value or
                     self.field__place_guid.value
                 )
             )
+
+        return result
 
     def render_base_config(self):
         super(AddressFields, self).render_base_config()
@@ -451,6 +456,8 @@ class AddressFields(BaseExtComponent):
             put('place', dict(UIAddressObjectMapper(place_dict)))
 
         put('zipCodeField', self.field__zip_code.render)
+        if self.backend.zip_code_url:
+            put('zipCodeURL', self.backend.zip_code_url)
 
         if self.level in (UI_LEVEL_STREET, UI_LEVEL_HOUSE, UI_LEVEL_FLAT):
             put('streetNameField', self.field__street_name.render)

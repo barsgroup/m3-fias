@@ -4,26 +4,28 @@ from __future__ import unicode_literals
 from abc import ABCMeta
 from abc import abstractmethod
 
+from django import VERSION as DJANGO_VERSION
 from django.http import HttpResponse
 from m3.actions import Action
 from m3.actions import ActionPack
-import django
 
 from m3_fias.utils import correct_keyboard_layout
 
 from .utils import HouseLoader
 from .utils import PlaceLoader
 from .utils import StreetLoader
+from .utils import get_address_object
+from .utils import get_house
 
 
-if django.VERSION < (1, 8):
+if DJANGO_VERSION < (1, 8):
     # Backport JsonResponse from Django 1.11
     import datetime
     import json
 
     class DjangoJSONEncoder(json.JSONEncoder):
 
-        def default(self, o):
+        def default(self, o):  # pylint: disable=method-hidden
             # See "Date Time String Format" in the ECMA-262 specification.
             if isinstance(o, datetime.datetime):
                 r = o.isoformat()
@@ -128,6 +130,36 @@ class HouseSearchAction(ParentMixin, ActionBase):
         return HouseLoader(context.parent, context.filter)
 
 
+class PostalCodeAction(Action):
+
+    """Обработчик запросов почтового индекса адресного объекта или здания."""
+
+    url = '/zip-code'
+
+    def context_declaration(self):
+        return dict(
+            address_object_guid=dict(type='m3-fias:guid'),
+            house_guid=dict(type='m3-fias:guid-or-none', default=None),
+        )
+
+    def run(self, request, context):
+        postal_code = None
+
+        if context.house_guid:
+            house = get_house(context.house_guid, context.address_object_guid)
+            if house:
+                postal_code = house.postal_code
+
+        else:
+            address_object = get_address_object(context.address_object_guid)
+            if address_object:
+                postal_code = address_object.postal_code
+
+        return _JsonResponse(dict(
+            zipCode=postal_code,
+        ))
+
+
 class Pack(ActionPack):
 
     u"""Набор действий для проксирования запросов к серверу ФИАС."""
@@ -140,9 +172,11 @@ class Pack(ActionPack):
         self.place_search_action = PlaceSearchAction()
         self.street_search_action = StreetSearchAction()
         self.house_search_action = HouseSearchAction()
+        self.postal_code_action = PostalCodeAction()
 
         self.actions.extend((
             self.place_search_action,
             self.street_search_action,
             self.house_search_action,
+            self.postal_code_action,
         ))

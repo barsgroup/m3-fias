@@ -33,6 +33,13 @@ class BackendBase(object):
         :rtype: str
         """
 
+    @abstractproperty
+    def zip_code_url(self):
+        """URL для запроса почтового индекса адресного объекта или здания.
+
+        :rtype: str
+        """
+
     def configure_place_field(self, field):
         """Настраивает поле "Населенный пункт".
 

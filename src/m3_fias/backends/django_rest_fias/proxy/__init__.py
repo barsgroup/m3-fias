@@ -66,6 +66,7 @@ class Backend(BackendBase):
             self._pack,
         ))
 
+    @cached_property
     def place_search_url(self):
         """URL для поиска населенных пунктов.
 
@@ -73,6 +74,7 @@ class Backend(BackendBase):
         """
         return self._pack.place_search_action.get_absolute_url()
 
+    @cached_property
     def street_search_url(self):
         """URL для поиска улиц.
 
@@ -80,12 +82,17 @@ class Backend(BackendBase):
         """
         return self._pack.street_search_action.get_absolute_url()
 
+    @cached_property
     def house_search_url(self):
         """URL для запроса списка домов.
 
         :rtype: str
         """
         return self._pack.house_search_action.get_absolute_url()
+
+    @cached_property
+    def zip_code_url(self):
+        return self._pack.postal_code_action.get_absolute_url()
 
     def find_address_objects(self, filter_string, levels=None,
                              parent_guid=None):

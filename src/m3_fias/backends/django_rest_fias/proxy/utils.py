@@ -11,6 +11,7 @@ from itertools import imap
 from uuid import UUID
 import httplib
 
+from m3_fias.backends.server import server
 from m3_fias.constants import FIAS_LEVELS_PLACE
 from m3_fias.constants import FIAS_LEVELS_STREET
 from m3_fias.data import AddressObject
@@ -18,15 +19,16 @@ from m3_fias.data import House
 from m3_fias.data import ObjectMapper
 from m3_fias.utils import cached_property
 
-from .server import server
-
 
 def _guid2str(guid):
+    result = None
     if guid:
         try:
-            return unicode(guid if isinstance(guid, UUID) else UUID(guid))
+            result = unicode(guid if isinstance(guid, UUID) else UUID(guid))
         except (AttributeError, TypeError, ValueError):
             raise ValueError(guid)
+
+    return result
 # -----------------------------------------------------------------------------
 # Обёртки над данными, поступающими с сервера django-rest-fias.
 
@@ -135,7 +137,6 @@ class UIAddressObjectMapper(ObjectMapper):
         level='aolevel',
         shortName='shortname',
         formalName='formalname',
-        postalCode='postalcode',
         fullName='fullname',
     )
 
@@ -149,10 +150,10 @@ class UIHouseMapper(ObjectMapper):
 
     fields_map = dict(
         guid='houseguid',
+        parentGUID='aoguid',
         houseNumber='housenum',
         buildingNumber='buildnum',
         structureNumber='strucnum',
-        postalCode='postalcode',
     )
 # -----------------------------------------------------------------------------
 # Загрузчики данных с сервера django-rest-fias.
@@ -171,12 +172,13 @@ class LoaderBase(object):
         :rtype: str
         """
 
-    @abstractproperty
+    @cached_property
     def _fields(self):
         """Имена полей, подлежащих загрузке.
 
         :rtype: tuple
         """
+        return self._mapper_class.fields_map.keys()
 
     @abstractproperty
     def _mapper_class(self):
@@ -319,10 +321,6 @@ class AddressObjectLoaderBase(LoaderBase):
     """
 
     _path = '/'
-
-    @cached_property
-    def _fields(self):
-        return self._mapper_class.fields_map.keys()
 
     def __init__(self, filter_string):
         """Инициализация экземпляра класса.
@@ -472,14 +470,6 @@ class HouseLoader(LoaderBase):
     """
 
     _mapper_class = UIHouseMapper
-
-    _fields = (
-        'guid',
-        'houseNumber',
-        'buildingNumber',
-        'structureNumber',
-        'postalCode',
-    )
 
     def __init__(self, address_object_guid, house):
         """Инициализация класса.

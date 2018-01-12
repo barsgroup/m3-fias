@@ -104,3 +104,50 @@ class TestCase(test.SimpleTestCase):
             self.assertIsInstance(row_data, dict)
             for name in HouseLoader._mapper_class.fields_map:
                 self.assertIn(name, row_data)
+
+    def test__zip_code_action(self):
+        """Проверка ZipCodeAction."""
+        def send_request(ao_guid, house_guid=None):
+            params = dict(
+                address_object_guid=ao_guid,
+            )
+            if house_guid:
+                params['house_guid'] = house_guid
+
+            client = Client()
+
+            return client.post('/actions/fias/zip-code', params)
+
+        for ao_guid, house_guid, zip_code in (
+            (
+                # г Новосибирск
+                '8dea00e3-9aab-4d8e-887c-ef2aaa546456',
+                None,
+                None
+            ), (
+                # Мурманская обл, г Полярные Зори, нп Зашеек: индекс есть
+                'b04bec8c-8d21-4b96-8ec1-7412bb50914e',
+                None,
+                '184230'
+            ), (
+                # г. Новосибирск, ул. Ленина: индекс нет.
+                '29090f1c-d114-430a-83bd-a4c254ef8ee9',
+                None,
+                None
+            ), (
+                # Забайкальский край, г Чита, пер 2-й Рабочий: индекс есть
+                'd4b170d2-2fbe-4e84-81cf-6ca77a0a14be',
+                None,
+                '672040'
+            ), (
+                # г Чита, ул Ленина, д. 159: индекс есть
+                '0d5c91c9-433f-43be-bc20-e7ebf352ccad',
+                '0d1ad06b-0f7f-493f-9076-0a05225af36c',
+                '672000'
+            )
+        ):
+            response = send_request(ao_guid, house_guid)
+            self.assertEqual(response.status_code, httplib.OK)
+            response_data = json.loads(response.content)
+            self.assertIn('zipCode', response_data)
+            self.assertEqual(response_data['zipCode'], zip_code)
