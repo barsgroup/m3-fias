@@ -39,7 +39,7 @@ def isort():
 
 
 @task
-def pep8():
+def style():
     """Проверка стилевого оформления кода проекта."""
     with nested(
         settings(ok_ret_codes=(0, 1)),
@@ -78,7 +78,7 @@ def pylint():
 def run_all():
     """Запуск всех проверок src.*."""
     execute(isort)
-    execute(pep8)
+    execute(style)
     execute(pylint)
 
 
