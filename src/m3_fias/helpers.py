@@ -171,6 +171,8 @@ class FiasAddressObject(object):
     LEVEL_ADDITIONAL_TERRITORY = 90
     # объект, подчиненный дополнительной территории
     LEVEL_AT_SUBORDINATED_OBJECT = 91
+    # планировочная структура
+    PLAN_STRUCTURE = 65
 
     # Уровень адресного объекта
     level = None
