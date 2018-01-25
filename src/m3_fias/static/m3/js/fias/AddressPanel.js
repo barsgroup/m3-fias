@@ -72,7 +72,7 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
              * @event change
              * Срабатывает, когда изменяется содержимое одного из полей.
              */
-            'change',
+            'change'
         );
     },
 
@@ -198,14 +198,14 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         return [
             Ext.m3.fias.UI_LEVEL_STREET,
             Ext.m3.fias.UI_LEVEL_HOUSE,
-            Ext.m3.fias.UI_LEVEL_FLAT,
+            Ext.m3.fias.UI_LEVEL_FLAT
         ].indexOf(this.level) != -1;
     },
 
     hasHouseField: function() {
         return [
             Ext.m3.fias.UI_LEVEL_HOUSE,
-            Ext.m3.fias.UI_LEVEL_FLAT,
+            Ext.m3.fias.UI_LEVEL_FLAT
         ].indexOf(this.level) != -1;
     },
 
@@ -900,7 +900,7 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         }
 
         return result;
-    },
+    }
 
 });
 
@@ -990,7 +990,7 @@ Ext.m3.fias.RowsAddressView = Ext.extend(Ext.m3.fias.AddressViewBase, {
             this.fields.zipCodeField,
             this.labelsWidth.zipCode,
             {
-                flex: 0,
+                flex: 0
             }
         );
         rowItems.push(
