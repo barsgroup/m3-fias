@@ -9,10 +9,45 @@ import os
 from fabric.api import local
 from fabric.context_managers import lcd
 from fabric.context_managers import settings
+from fabric.context_managers import shell_env
 from fabric.decorators import task
 
 from . import _settings
 from ._utils import install_requirements
+
+
+@task
+def app(backend='m3_fias.backends.django_rest_fias.proxy'):
+    """Запуск тестового веб-приложения."""
+    with nested(
+        shell_env(
+            PYTHONPATH=':'.join((
+                _settings.SRC_DIR,
+                _settings.TESTS_DIR,
+            )),
+            FIAS_BACKEND=backend,
+            FIAS_USE_CACHE='True',
+        ),
+        lcd(_settings.TESTS_DIR),
+    ):
+        local('python manage.py runserver')
+
+
+@task
+def shell(backend='m3_fias.backends.django_rest_fias.proxy'):
+    """Запуск тестового веб-приложения."""
+    with nested(
+        shell_env(
+            PYTHONPATH=':'.join((
+                _settings.SRC_DIR,
+                _settings.TESTS_DIR,
+            )),
+            FIAS_BACKEND=backend,
+            FIAS_USE_CACHE='True',
+        ),
+        lcd(_settings.TESTS_DIR),
+    ):
+        local('python manage.py shell')
 
 
 @task
