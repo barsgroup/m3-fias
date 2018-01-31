@@ -19,6 +19,9 @@
     "/1ac46b49-3209-4814-b7bf-a509ea1aecd9/": "ao5.json",
     "/2d9abaa6-85a6-4f1f-a1bd-14b76ec17d9c/": "ao6.json",
     "/4792cbff-20ee-4d4a-9c35-f6fa75e1bf9a/": "ao7.json",
+    "/2b03a2a5-7635-4318-bc65-0660c037524d/": "ao8.json",
     "/0d5c91c9-433f-43be-bc20-e7ebf352ccad/houses/0d1ad06b-0f7f-493f-9076-0a05225af36c/": "house1.json",
-    "/0d5c91c9-433f-43be-bc20-e7ebf352ccad/houses/a18032c1-72ac-4a0d-a528-07a611f551e9/": "house2.json"
+    "/0d5c91c9-433f-43be-bc20-e7ebf352ccad/houses/a18032c1-72ac-4a0d-a528-07a611f551e9/": "house2.json",
+    "/2b03a2a5-7635-4318-bc65-0660c037524d/houses/45600c3e-7b68-413b-8d7c-1b1d644d76bc/": "house3.json",
+    "/2b03a2a5-7635-4318-bc65-0660c037524d/houses?page=1": "find_house3.json"
 }

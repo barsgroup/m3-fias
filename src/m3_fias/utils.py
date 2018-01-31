@@ -102,7 +102,8 @@ def get_address_object(guid):
     return config.backend.get_address_object(guid)
 
 
-def find_house(ao_guid, house_number, building_number='', structure_number=''):
+def find_house(ao_guid, house_number='', building_number='',
+               structure_number=''):
     """Возвращает информацию о здании по его номеру.
 
     :param ao_guid: GUID адресного объекта.

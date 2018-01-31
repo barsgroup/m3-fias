@@ -164,6 +164,13 @@ class LoaderBase(object):
 
     __metaclass__ = ABCMeta
 
+    def __init__(self, filter_string):
+        """Инициализация экземпляра класса.
+
+        :param unicode filter_string: Строка для фильтрации объектов.
+        """
+        self.filter_string = filter_string
+
     @abstractproperty
     def _path(self):
         """Путь к ресурсу API сервера ФИАС.
@@ -324,13 +331,6 @@ class AddressObjectLoaderBase(LoaderBase):
     def _fields(self):
         return self._mapper_class.fields_map.keys()
 
-    def __init__(self, filter_string):
-        """Инициализация экземпляра класса.
-
-        :param unicode filter_string: Строка для фильтрации объектов.
-        """
-        self.filter_string = filter_string
-
     @abstractproperty
     def _levels(self):
         """Уровни адресных объектов, для которых нужно искать данные в ФИАС.
@@ -481,20 +481,23 @@ class HouseLoader(LoaderBase):
         'postalCode',
     )
 
-    def __init__(self, address_object_guid, house):
+    def __init__(self, address_object_guid, filter_string):
         """Инициализация класса.
 
         :param basestring address_object_guid: GUID адресного объекта, в
             котором находится здание.
 
-        :param unicode house: Строка для поиска здания по номеру дома. Содержит
-            первые символы в номере.
+        :param filter_string: Строка для поиска здания по номеру
+            дома/корпуса/строения. Содержит первые символы в номере. Значение
+            ``None`` указывает на необходимость загрузки сведений обо всех
+            зданиях адресного объекта.
+        :type filter_string: unicode or NoneType
         """
-        super(HouseLoader, self).__init__()
+        super(HouseLoader, self).__init__(
+            filter_string.lower() if filter_string else None
+        )
 
         self.address_object_guid = _guid2str(address_object_guid)
-
-        self.house = house
 
     @property
     def _path(self):
@@ -525,13 +528,31 @@ class HouseLoader(LoaderBase):
         Запись считается соответствующей указанным при инициализации загрузчика
         параметрам поиска, если:
 
-            * номер дома в записи **начинается со строки**, указанной в
-              аргументе ``house``.
+            * номер дома (если есть) в записи **начинается со строки**,
+              указанной в аргументе ``filter_string``;
+            * номер корпуса или строения (если номер дома отсутствует) в записи
+              **начинается со строки**, указанной в аргументе
+              ``filter_string``;
+            * в аргументе ``filter_string`` конструктора класса было передано
+              значение ``None``.
 
         :rtype: bool
         """
-        house = object_data.get('houseNumber', '') or ''
-        return not house or house.startswith(self.house)
+        if self.filter_string is None:
+            result = True
+        else:
+            house = (object_data.get('houseNumber') or '').lower()
+
+            if house:
+                result = house.startswith(self.filter_string)
+            else:
+                building = (object_data.get('buildingNumber') or '').lower()
+                structure = (object_data.get('structureNumber') or '').lower()
+                result = (
+                    building and building.startswith(self.filter_string) or
+                    structure and structure.startswith(self.filter_string)
+                )
+        return result
 
     def _process_object_data(self, drf_object_data):
         house_data = super(HouseLoader, self)._process_object_data(
@@ -619,7 +640,8 @@ def get_house(guid, ao_guid):
     return result
 
 
-def find_house(ao_guid, house_number, building_number='', structure_number=''):
+def find_house(ao_guid, house_number='', building_number='',
+               structure_number=''):
     """Возвращает информацию о здании по его номеру.
 
     :param ao_guid: GUID адресного объекта.
@@ -629,12 +651,18 @@ def find_house(ao_guid, house_number, building_number='', structure_number=''):
 
     :rtype: m3_fias.data.House or NoneType
     """
+    assert house_number or building_number or structure_number, (
+        house_number, building_number, structure_number
+    )
+
     houses = tuple(
         house_info['guid']
-        for house_info in HouseLoader(ao_guid, house_number).load()
+        for house_info in HouseLoader(
+            ao_guid, house_number or building_number or structure_number
+        ).load()
         if (
             house_info['guid'] and
-            house_info['houseNumber'] == house_number and
+            house_info['houseNumber'] == (house_number or '') and
             house_info['buildingNumber'] == (building_number or '') and
             house_info['structureNumber'] == (structure_number or '')
         )

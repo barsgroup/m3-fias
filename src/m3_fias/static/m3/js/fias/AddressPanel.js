@@ -309,7 +309,11 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         if (this.fiasOnly) {
             return !this.houseGUIDField.getValue();
         } else {
-            return !this.houseNumberField.getValue();
+            return (
+                !this.houseNumberField.getValue() &&
+                !this.buildingNumberField.getValue() &&
+                !this.structureNumberField.getValue()
+            );
         }
     },
 
@@ -728,24 +732,24 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
                     addressParts.push(
                         'д.' + this.houseNumberField.getValue()
                     );
+                }
 
-                    if (!this.isBuildingEmpty()) {
-                        addressParts.push(
-                            'корп.' + this.buildingNumberField.getValue()
-                        );
-                    }
+                if (this.hasHouseField() && !this.isBuildingEmpty()) {
+                    addressParts.push(
+                        'корп.' + this.buildingNumberField.getValue()
+                    );
+                }
 
-                    if (!this.isStructureEmpty()) {
-                        addressParts.push(
-                            'стр.' + this.structureNumberField.getValue()
-                        );
-                    }
+                if (this.hasHouseField() && !this.isStructureEmpty()) {
+                    addressParts.push(
+                        'стр.' + this.structureNumberField.getValue()
+                    );
+                }
 
-                    if (this.hasFlatField() && !this.isFlatEmpty()) {
-                        addressParts.push(
-                            'кв.' + this.flatNumberField.getValue()
-                        );
-                    }
+                if (this.hasFlatField() && !this.isFlatEmpty()) {
+                    addressParts.push(
+                        'кв.' + this.flatNumberField.getValue()
+                    );
                 }
             }
         }
@@ -754,9 +758,11 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
     },
 
     updateFullAddress: function() {
-        this.fullAddressField.setValue(this.getFullAddress());
+        if (this.hasFullAddressField()) {
+            this.fullAddressField.setValue(this.getFullAddress());
 
-        this.fireEvent('change', this);
+            this.fireEvent('change', this);
+        }
     },
 
     /**
@@ -913,7 +919,9 @@ Ext.m3.fias.AddressViewBase = Ext.extend(Ext.Container, {
     houseTpl: [
         '<tpl for=".">',
             '<div class="x-combo-list-item">',
-                'д.{houseNumber}',
+                '<tpl if="houseNumber">',
+                    'д.{houseNumber}',
+                '</tpl>',
                 '<tpl if="buildingNumber">',
                     ' корп.{buildingNumber}',
                 '</tpl>',
