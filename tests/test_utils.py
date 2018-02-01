@@ -82,6 +82,7 @@ class UtilsTestCase(SimpleTestCase):
 
     def test__find_house(self):
         """Проверка функции find_house."""
+        # ---------------------------------------------------------------------
         # Новосибирск, ул. Вокзальная магистраль
         street_guid = 'e2e21636-929a-4c51-b7b5-06ac067ce3f5'
         # Новосибирск, ул. Вокзальная магистраль, д. 1/1
@@ -95,6 +96,20 @@ class UtilsTestCase(SimpleTestCase):
         self.assertEqual(house.house_number, '1/1')
         self.assertFalse(house.building_number)
         self.assertFalse(house.structure_number)
+        # ---------------------------------------------------------------------
+        # Московская обл., г. Звенигород, мкр. Супонево
+        street_guid = '2b03a2a5-7635-4318-bc65-0660c037524d'
+        # Московская обл., г. Звенигород, мкр. Супонево, стр. 18
+        house_guid = '45600c3e-7b68-413b-8d7c-1b1d644d76bc'
+
+        house = find_house(street_guid, None, None, '18')
+        self.assertIsInstance(house, House)
+        self.assertEqual(house.guid, house_guid)
+        self.assertEqual(house.parent_guid, street_guid)
+        self.assertFalse(house.house_number)
+        self.assertFalse(house.building_number)
+        self.assertEqual(house.structure_number, '18')
+        # ---------------------------------------------------------------------
 
     def test__get_address_object_name(self):
         """Проверка функции get_address_object_name."""
