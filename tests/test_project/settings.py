@@ -1,4 +1,6 @@
 # coding: utf-8
+from __future__ import absolute_import
+
 from os.path import abspath
 from os.path import dirname
 from os.path import join
@@ -16,7 +18,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1']
 
-MIDDLEWARE_CLASSES = []
+if django.VERSION < (1, 10):
+    MIDDLEWARE_CLASSES = []
+else:
+    MIDDLEWARE = []
 
 INSTALLED_APPS = [
     'django.contrib.staticfiles',

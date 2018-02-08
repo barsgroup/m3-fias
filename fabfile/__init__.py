@@ -24,7 +24,7 @@ def clean():
     execute(src.clean)
     execute(tests.clean)
 
-    with cd(_settings.PROJECT_DIR):
+    with cd(_settings.PROJECT_DIR):  # pylint: disable=not-context-manager
         for path in ('.eggs', 'dist'):
             local(
                 'rm -f -r -d "{project_dir}"'

@@ -20,7 +20,7 @@ def _get_requirements(file_path):
 
 
 def _read(file_path):
-    with file(file_path, 'r') as infile:
+    with open(file_path, 'r') as infile:
         return infile.read()
 
 
@@ -42,9 +42,8 @@ setup(
         'Natural Language :: Russian',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2 :: Only',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django :: 1.4',
         'Framework :: Django :: 1.5',
@@ -65,7 +64,7 @@ setup(
         'http://pypi.bars-open.ru/simple/m3-builder',
     ),
     setup_requires=(
-        'm3-builder>=1.0.1',
+        'm3-builder>=1.1,<2',
     ),
     set_build_info=dirname(__file__),
 )

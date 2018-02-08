@@ -1,14 +1,21 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from abc import ABCMeta
 from abc import abstractproperty
 from collections import Mapping
+from collections import MutableMapping
 from collections import namedtuple
 from datetime import date
 from datetime import datetime
 from functools import partial
 from uuid import UUID
+
+from six import iteritems
+from six import iterkeys
+from six import text_type
+from six import with_metaclass
 
 from m3_fias.constants import FIAS_LEVELS
 
@@ -43,7 +50,7 @@ class ObjectMeta(ABCMeta):
 
         fields = namespace['fields']
         if isinstance(fields, dict):
-            for field_name, field_descriptor in fields.iteritems():
+            for field_name, field_descriptor in iteritems(fields):
                 setattr(cls, field_name, ReadOnlyAttribute(
                     name=field_name,
                     doc=field_descriptor.description,
@@ -52,14 +59,12 @@ class ObjectMeta(ABCMeta):
         return cls
 
 
-class ObjectBase(object):
+class ObjectBase(with_metaclass(ObjectMeta, object)):
 
     """Базовый класс для объектов ФИАС.
 
     Обеспечивает неизменяемость данных (объекты только для чтения).
     """
-
-    __metaclass__ = ObjectMeta
 
     @abstractproperty
     def fields(self):
@@ -69,7 +74,7 @@ class ObjectBase(object):
         return hash(self.id)  # pylint: disable=no-member
 
     def __init__(self, **kwargs):
-        for field_name, field_descriptor in self.fields.iteritems():
+        for field_name, field_descriptor in iteritems(self.fields):
             if field_descriptor.required:
                 if field_name in kwargs:
                     field_value = kwargs[field_name]
@@ -146,7 +151,7 @@ class ObjectDictAdapter(Mapping, dict):
 
 
 def _unicode(value):
-    return value if isinstance(value, unicode) else unicode(value)
+    return value if isinstance(value, text_type) else text_type(value)
 
 
 def _unicode_or_empty(value):
@@ -166,7 +171,7 @@ def _int_or_none(value):
 
 def _uuid(value):
     try:
-        return unicode(value if isinstance(value, UUID) else UUID(value))
+        return text_type(value if isinstance(value, UUID) else UUID(value))
     except (AttributeError, TypeError, ValueError):
         raise ValueError(value)
 
@@ -509,11 +514,9 @@ class House(ObjectBase):
     }
 
 
-class ObjectMapper(object):
+class ObjectMapper(with_metaclass(ABCMeta, MutableMapping)):
 
     """Обертка над словарями, преобразующая ключи."""
-
-    __metaclass__ = ABCMeta
 
     @abstractproperty
     def fields_map(self):
@@ -529,15 +532,19 @@ class ObjectMapper(object):
 
     def __len__(self):
         i = 0
-        for i, _ in enumerate(self.iterkeys(), 1):
+        for i, _ in enumerate(iterkeys(self), 1):
             pass
         return i
 
     def __iter__(self):
-        return iter(self._data)
+        return (
+            key
+            for key, mapped_key in iteritems(self.fields_map)
+            if mapped_key in self._data
+        )
 
-    def __contains__(self, key):
-        return key in self.iterkeys()
+#    def __contains__(self, key):
+#        return key in iterkeys(self)
 
     def __getitem__(self, key):
         return self._data[self.fields_map[key]]
@@ -548,38 +555,39 @@ class ObjectMapper(object):
     def __delitem__(self, key):
         del self._data[self.fields_map[key]]
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._data)
+    __nonzero__ = __bool__
 
-    def get(self, key, default=None):
-        return self._data.get(self.fields_map[key], default)
+#    def get(self, key, default=None):
+#        return self._data.get(self.fields_map[key], default)
 
-    def keys(self):
-        return list(self.iterkeys())
+#    def keys(self):
+#        return list(iterkeys(self._data))
 
-    def iterkeys(self):
-        return (
-            key
-            for key in self.fields_map
-            if self.fields_map[key] in self._data
-        )
+#    def iterkeys(self):
+#        return (
+#            key
+#            for key in self.fields_map
+#            if self.fields_map[key] in self._data
+#        )
 
-    def values(self):
-        return list(self.itervalues())
+#    def values(self):
+#        return list(itervalues(self))
 
-    def itervalues(self):
-        return (
-            self._data[self.fields_map[key]]
-            for key in self.fields_map
-            if self.fields_map[key] in self._data
-        )
+#    def itervalues(self):
+#        return (
+#            self._data[self.fields_map[key]]
+#            for key in self.fields_map
+#            if self.fields_map[key] in self._data
+#        )
 
-    def items(self):
-        return list(self.iteritems())
+#    def items(self):
+#        return list(iteritems(self))
 
-    def iteritems(self):
-        return (
-            (key, self._data[self.fields_map[key]])
-            for key in self.fields_map
-            if self.fields_map[key] in self._data
-        )
+#    def iteritems(self):
+#        return (
+#            (key, self._data[self.fields_map[key]])
+#            for key in self.fields_map
+#            if self.fields_map[key] in self._data
+#        )

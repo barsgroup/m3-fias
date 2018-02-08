@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from django.test import SimpleTestCase
@@ -55,14 +56,14 @@ class UtilsTestCase(SimpleTestCase):
             )
 
         self.assertEqual(len(result), 2)
-        self.assertItemsEqual(get_param_values('guid'), (
+        self.assertEqual(set(get_param_values('guid')), {
             'c4b23ba4-e4ba-47d6-9000-4d502ef7bd5a',
             'e2e21636-929a-4c51-b7b5-06ac067ce3f5',
-        ))
-        self.assertItemsEqual(get_param_values('formal_name'), (
+        })
+        self.assertEqual(set(get_param_values('formal_name')), {
             'Вокзальная',
             'Вокзальная магистраль',
-        ))
+        })
 
     def test__get_house(self):
         """Проверка функции get_house."""
@@ -138,7 +139,7 @@ class UtilsTestCase(SimpleTestCase):
             get_house_name(
                 get_house(
                     guid='0d1ad06b-0f7f-493f-9076-0a05225af36c',
-                    ao_guid='0d5c91c9-433f-43be-bc20-e7ebf352ccad'
+                    ao_guid='0d5c91c9-433f-43be-bc20-e7ebf352ccad',
                 )
             ),
             'д. 159'
@@ -147,7 +148,7 @@ class UtilsTestCase(SimpleTestCase):
             get_house_name(
                 get_house(
                     guid='a18032c1-72ac-4a0d-a528-07a611f551e9',
-                    ao_guid='0d5c91c9-433f-43be-bc20-e7ebf352ccad'
+                    ao_guid='0d5c91c9-433f-43be-bc20-e7ebf352ccad',
                 )
             ),
             'д. 1, корп. Д, стр. 11'

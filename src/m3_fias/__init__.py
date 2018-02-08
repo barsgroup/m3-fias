@@ -1,19 +1,19 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from importlib import import_module
 import abc
 
 from django.conf import settings
+from six import with_metaclass
 
 from .utils import cached_property
 
 
-class Config(object):
+class Config(with_metaclass(abc.ABCMeta, object)):
 
     """Базовый класс для конфигурации пакета."""
-
-    __metaclass__ = abc.ABCMeta
 
     @cached_property
     def backend(self):

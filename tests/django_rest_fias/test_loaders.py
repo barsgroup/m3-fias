@@ -1,5 +1,6 @@
 # coding: utf-8
 # pylint: disable=protected-access
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from collections import Iterable
@@ -8,6 +9,7 @@ from uuid import UUID
 
 from django import test
 from django.conf import settings
+from six import iterkeys
 
 from m3_fias.backends.django_rest_fias.proxy.utils import HouseLoader
 from m3_fias.backends.django_rest_fias.proxy.utils import PlaceLoader
@@ -29,11 +31,12 @@ class TestCase(test.SimpleTestCase):
         loader = PlaceLoader(place_name)
         data = loader.load()
 
-        self.assertIsInstance(data, Iterable)
+        self.assertIsInstance(data, Iterable, type(data))
         self.assertEqual(len(data), 9)
         for ao_data in data:
             self.assertIn(ao_data['level'], loader._levels)
-            self.assertItemsEqual(ao_data, loader._fields)
+            for key in iterkeys(ao_data):
+                self.assertIn(key, loader._fields, key)
 
         data = PlaceLoader('лени').load(page=1)
         self.assertEqual(len(data), 100)
@@ -49,11 +52,12 @@ class TestCase(test.SimpleTestCase):
         loader = StreetLoader(street_name, parent_guid)
         data = loader.load()
 
-        self.assertIsInstance(data, Iterable)
+        self.assertIsInstance(data, Iterable, type(data))
         self.assertEqual(len(data), 1)
         for ao_data in data:
             self.assertIn(ao_data['level'], loader._levels)
-            self.assertItemsEqual(ao_data, loader._fields)
+            for key in iterkeys(ao_data):
+                self.assertIn(key, loader._fields, key)
             self.assertTrue(ao_data['formalName'].startswith(street_name))
 
     def test__house_loader1(self):
@@ -64,10 +68,11 @@ class TestCase(test.SimpleTestCase):
         loader = HouseLoader(address_object_guid, house_filter)
         data = loader.load()
 
-        self.assertIsInstance(data, Iterable)
+        self.assertIsInstance(data, Iterable, type(data))
         self.assertEqual(len(data), 5)
         for ao_data in data:
             house = ao_data['houseNumber']
 
-            self.assertItemsEqual(ao_data, loader._fields)
+            for key in iterkeys(ao_data):
+                self.assertIn(key, loader._fields, key)
             self.assertTrue(house.startswith(house_filter), house)

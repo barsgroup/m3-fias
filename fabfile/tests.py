@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from contextlib import nested
 import os
 
 from fabric.api import local
@@ -14,6 +13,7 @@ from fabric.decorators import task
 
 from . import _settings
 from ._utils import install_requirements
+from ._utils import nested
 
 
 @task

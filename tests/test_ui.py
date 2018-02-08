@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from django import test
@@ -15,6 +16,8 @@ from m3_fias.ui import RowsAddressView
 class TestCase(test.SimpleTestCase):
 
     """Проверка компонент пользовательского интерфейса."""
+
+    # pylint: disable=no-self-use
 
     @classmethod
     def setUpClass(cls):

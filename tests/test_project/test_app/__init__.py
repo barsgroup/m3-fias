@@ -1,14 +1,17 @@
 # coding: utf-8
+# pylint: disable=import-error
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from BaseHTTPServer import HTTPServer
 from threading import Thread
 
 from django.conf import settings
+from six.moves.BaseHTTPServer import HTTPServer
 
 from django_rest_fias.server_mock import DjangoRestFiasServerMock
-from m3_fias.utils import cached_property
 from test_project.controllers import controller
+
+from m3_fias.utils import cached_property
 import m3_fias
 
 

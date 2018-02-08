@@ -1,9 +1,13 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from datetime import date
 
 from django.test import SimpleTestCase
+from six import iteritems
+from six import iterkeys
+from six import itervalues
 
 from m3_fias.constants import FIAS_LEVEL_CITY
 from m3_fias.data import AddressObject
@@ -48,20 +52,17 @@ class TestCase(SimpleTestCase):
         self.assertFalse(DataMapper({}))
         self.assertTrue(mapped_data)
         self.assertEqual(len(mapped_data), 2)
-        self.assertItemsEqual(mapped_data, test_data.keys())
-        self.assertItemsEqual(mapped_data.keys(), ('qwe', 'asd'))
-        self.assertItemsEqual(mapped_data.values(), ('Иванов', 'Петров'))
-        self.assertItemsEqual(mapped_data.items(), (
-            ('qwe', 'Иванов'), ('asd', 'Петров'))
+        self.assertIn('qwe', mapped_data)
+        self.assertIn('asd', mapped_data)
+        self.assertNotIn('zxc', mapped_data)
+        self.assertEqual(mapped_data['qwe'], 'Иванов')
+        self.assertEqual(mapped_data['asd'], 'Петров')
+        self.assertEqual(set(iterkeys(mapped_data)), {'qwe', 'asd'})
+        self.assertEqual(set(itervalues(mapped_data)), {'Иванов', 'Петров'})
+        self.assertEqual(
+            set(iteritems(mapped_data)),
+            {('qwe', 'Иванов'), ('asd', 'Петров')}
         )
-        self.assertItemsEqual(mapped_data.iterkeys(), ('qwe', 'asd'))
-        self.assertItemsEqual(mapped_data.itervalues(), ('Иванов', 'Петров'))
-        self.assertItemsEqual(mapped_data.iteritems(), (
-            ('qwe', 'Иванов'), ('asd', 'Петров')
-        ))
-        self.assertTrue('qwe' in mapped_data)
-        self.assertTrue('asd' in mapped_data)
-        self.assertFalse('zxc' in mapped_data)
 
         del mapped_data['qwe']
         self.assertEqual(len(mapped_data), 1)
@@ -121,7 +122,7 @@ class TestCase(SimpleTestCase):
         self.assertEqual(ao.level, FIAS_LEVEL_CITY)
         self.assertEqual(ao.short_name, 'ул')
         self.assertEqual(ao.formal_name, 'Вокзальная магистраль')
-        self.assertEqual(ao.date_of_creation, date(1900, 01, 01))
+        self.assertEqual(ao.date_of_creation, date(1900, 0o1, 0o1))
         self.assertEqual(ao.date_of_update, date(2014, 3, 1))
         self.assertEqual(ao.date_of_expiration, date(2079, 6, 6))
         self.assertIs(ao.live_status, 1)

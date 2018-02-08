@@ -1,16 +1,17 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from abc import ABCMeta
 from abc import abstractmethod
 from abc import abstractproperty
 
+from six import with_metaclass
 
-class BackendBase(object):
+
+class BackendBase(with_metaclass(ABCMeta, object)):
 
     """Базовый класс для бэкендов."""
-
-    __metaclass__ = ABCMeta
 
     @abstractproperty
     def place_search_url(self):

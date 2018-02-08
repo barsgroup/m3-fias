@@ -16,7 +16,7 @@ requests-oauthlib<1
 isort
 pep8
 pep257
-pylint
+pylint==1.8.2
 
 # Генерация документации.
 Sphinx>=1.5.2
@@ -24,6 +24,6 @@ sphinx_rtd_theme>=0.1.9
 sphinx-autobuild>=0.6.0
 
 # Инструменты разработчика.
-ipython<6
+ipython
 ipdb
 pudb

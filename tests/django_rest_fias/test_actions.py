@@ -1,14 +1,15 @@
 # coding: utf-8
 # pylint: disable=protected-access
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from unittest import skipUnless
-import httplib
 import json
 
 from django import test
 from django.conf import settings
 from django.test import Client
+from six.moves import http_client
 
 from m3_fias.backends.django_rest_fias.proxy.utils import HouseLoader
 from m3_fias.backends.django_rest_fias.proxy.utils import PlaceLoader
@@ -38,7 +39,7 @@ class TestCase(test.SimpleTestCase):
             filter='лени',
         ))
 
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, http_client.OK)
         response_data = json.loads(response.content)
         self.assertIn('total', response_data)
         self.assertIsInstance(response_data['total'], int)
@@ -64,7 +65,7 @@ class TestCase(test.SimpleTestCase):
             filter='ленина',
         ))
 
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, http_client.OK)
         response_data = json.loads(response.content)
         self.assertIn('total', response_data)
         self.assertIsInstance(response_data['total'], int)
@@ -90,7 +91,7 @@ class TestCase(test.SimpleTestCase):
             filter='1',
         ))
 
-        self.assertEqual(response.status_code, httplib.OK)
+        self.assertEqual(response.status_code, http_client.OK)
         response_data = json.loads(response.content)
         self.assertIn('total', response_data)
         self.assertIsInstance(response_data['total'], int)

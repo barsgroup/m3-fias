@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from m3_ext.ui.containers.containers import ExtContainer
@@ -19,6 +20,8 @@ import m3_fias
 class AddressWindow(ExtWindow):
 
     """Окно с адресными панелями."""
+
+    # pylint: disable=no-self-use
 
     def _get_address_panels(self, fields_config=None, view_config=None):
         def get_panel(level, title):

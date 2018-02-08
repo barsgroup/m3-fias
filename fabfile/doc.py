@@ -14,7 +14,7 @@ from . import _settings
 @task
 def build():
     """Сборка документации."""
-    with lcd(_settings.DOCS_DIR):
+    with lcd(_settings.DOCS_DIR):  # pylint: disable=not-context-manager
         local(u'make html')
 
 
@@ -29,7 +29,7 @@ def browser():
 @task
 def server():
     """Запуск веб-сервера для автогенерации и просмотра документации."""
-    with lcd(_settings.DOCS_DIR):
+    with lcd(_settings.DOCS_DIR):  # pylint: disable=not-context-manager
         local(u'make livehtml')
 
 

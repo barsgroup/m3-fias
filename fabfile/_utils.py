@@ -2,12 +2,18 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from itertools import imap
-
-from pkg_resources import DistributionNotFound
-from pkg_resources import get_distribution
+import sys
 
 from fabric.api import local
+from pkg_resources import DistributionNotFound
+from pkg_resources import get_distribution
+from six.moves import map
+
+
+if sys.version_info.major == 2:
+    from contextlib import nested  # pylint: disable=unused-import
+else:
+    from fabric.context_managers import nested  # pylint: disable=unused-import
 
 
 # Параметры pip, общие для всех команд.
@@ -47,5 +53,5 @@ def install_requirements(requirements_file, packages, quiet):
     :param list packages: список имен пакетов, при отсутствии которых в
         окружении будут установлены пакеты, перечисленные в указанном файле.
     """
-    if not all(imap(is_package_installed, packages)):
+    if not all(map(is_package_installed, packages)):
         install_packages_from_file(requirements_file, quiet)

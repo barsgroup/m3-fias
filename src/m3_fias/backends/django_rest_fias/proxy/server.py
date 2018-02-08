@@ -1,23 +1,23 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from abc import ABCMeta
 from abc import abstractproperty
 import hashlib
-import httplib
 import json
 
 from django.utils.functional import SimpleLazyObject
 from requests import Session
+from six import with_metaclass
+from six.moves import http_client
 
 from m3_fias.utils import cached_property
 
 
-class ServerBase(object):
+class ServerBase(with_metaclass(ABCMeta, object)):
 
     """Базовый класс для серверов ФИАС."""
-
-    __metaclass__ = ABCMeta
 
     def __init__(self, **kwargs):
         self._base_url = kwargs['url']
@@ -66,16 +66,18 @@ class CachingMixin(object):
 
     def get(self, path, params=None):
         hasher = hashlib.sha1()
-        hasher.update(self._cache_key_prefix + ':'.join((
-            path, json.dumps(params, sort_keys=True)
-        )))
+        hasher.update(':'.join((
+            self._cache_key_prefix,
+            path,
+            json.dumps(params, sort_keys=True)
+        )).encode('utf-8'))
         cache_key = hasher.hexdigest()
         if cache_key in self._cache:
             response = self._cache.get(cache_key)
         else:
             response = super(CachingMixin, self).get(path, params)
 
-            if response.status_code == httplib.OK:
+            if response.status_code == http_client.OK:
                 self._cache.set(cache_key, response,)
 
         return response
