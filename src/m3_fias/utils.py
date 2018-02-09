@@ -175,7 +175,9 @@ def get_house_name(house):
 
       * д. 1
       * д. 2 корп. 3
+      * корп. 5
       * д. 4 стр. 5
+      * стр. 9
       * д. 6 корп. 7 стр. 8
 
     :type house: m3_fias.data.House
@@ -184,7 +186,9 @@ def get_house_name(house):
     """
     assert isinstance(house, House), type(house)
 
-    names = ['д. ' + house.house_number]
+    names = []
+    if house.house_number:
+        names.append('д. ' + house.house_number)
     if house.building_number:
         names.append('корп. ' + house.building_number)
     if house.structure_number:

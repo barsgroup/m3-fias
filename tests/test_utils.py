@@ -152,6 +152,16 @@ class UtilsTestCase(SimpleTestCase):
             ),
             'д. 1, корп. Д, стр. 11'
         )
+        self.assertEqual(
+            get_house_name(
+                # Московская обл., г. Звенигород, мкр. Супонево, стр. 18
+                get_house(
+                    guid='45600c3e-7b68-413b-8d7c-1b1d644d76bc',
+                    ao_guid='2b03a2a5-7635-4318-bc65-0660c037524d',
+                )
+            ),
+            'стр. 18'
+        )
 
     def test__get_full_name(self):
         """Проверка функции get_full_name."""
