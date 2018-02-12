@@ -543,9 +543,6 @@ class ObjectMapper(with_metaclass(ABCMeta, MutableMapping)):
             if mapped_key in self._data
         )
 
-#    def __contains__(self, key):
-#        return key in iterkeys(self)
-
     def __getitem__(self, key):
         return self._data[self.fields_map[key]]
 
@@ -558,36 +555,3 @@ class ObjectMapper(with_metaclass(ABCMeta, MutableMapping)):
     def __bool__(self):
         return bool(self._data)
     __nonzero__ = __bool__
-
-#    def get(self, key, default=None):
-#        return self._data.get(self.fields_map[key], default)
-
-#    def keys(self):
-#        return list(iterkeys(self._data))
-
-#    def iterkeys(self):
-#        return (
-#            key
-#            for key in self.fields_map
-#            if self.fields_map[key] in self._data
-#        )
-
-#    def values(self):
-#        return list(itervalues(self))
-
-#    def itervalues(self):
-#        return (
-#            self._data[self.fields_map[key]]
-#            for key in self.fields_map
-#            if self.fields_map[key] in self._data
-#        )
-
-#    def items(self):
-#        return list(iteritems(self))
-
-#    def iteritems(self):
-#        return (
-#            (key, self._data[self.fields_map[key]])
-#            for key in self.fields_map
-#            if self.fields_map[key] in self._data
-#        )

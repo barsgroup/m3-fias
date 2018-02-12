@@ -347,7 +347,10 @@ class AddressObjectLoaderBase(LoaderBase):
         :rtype: dict
         """
         result = super(AddressObjectLoaderBase, self)._get_params()
-        result['scan'] = self.filter_string
+        result['scan'] = ','.join(
+            word.replace('.', '')
+            for word in self.filter_string.split()
+        )
         if self._levels:
             result['aolevel'] = ','.join(map(str, self._levels))
         return result
