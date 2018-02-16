@@ -1,5 +1,6 @@
 # coding: utf-8
 """Бэкенд, проксирующий запросы через веб-приложение."""
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from abc import abstractmethod
@@ -7,6 +8,7 @@ from uuid import UUID
 
 from m3.actions import ControllerCache
 from m3_ext.ui.misc.store import ExtJsonStore
+from six import text_type
 
 from m3_fias.backends.base import BackendBase
 from m3_fias.utils import cached_property
@@ -34,7 +36,7 @@ class Backend(BackendBase):
         params = (
             (
                 'm3-fias:unicode-or-none',
-                lambda s: unicode(s) if s else None
+                lambda s: text_type(s) if s else None
             ),
             (
                 'm3-fias:int-list',

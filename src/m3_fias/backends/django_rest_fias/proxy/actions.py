@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from abc import ABCMeta
@@ -7,6 +8,8 @@ from abc import abstractmethod
 from django.http import HttpResponse
 from m3.actions import Action
 from m3.actions import ActionPack
+from six import text_type
+from six import with_metaclass
 import django
 
 from m3_fias.utils import correct_keyboard_layout
@@ -23,7 +26,7 @@ if django.VERSION < (1, 8):
 
     class DjangoJSONEncoder(json.JSONEncoder):
 
-        def default(self, o):
+        def default(self, o):  # pylint: disable=method-hidden
             # See "Date Time String Format" in the ECMA-262 specification.
             if isinstance(o, datetime.datetime):
                 r = o.isoformat()
@@ -56,11 +59,9 @@ else:
     from django.http.response import JsonResponse as _JsonResponse
 
 
-class ActionBase(Action):
+class ActionBase(with_metaclass(ABCMeta, Action)):
 
     u"""Базовый класс для обработчиков запросов на поиск данных в ФИАС."""
-
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def _get_loader(self, context):
@@ -114,7 +115,7 @@ class StreetSearchAction(ParentMixin, ActionBase):
 
     def _get_loader(self, context):
         # pylint: disable=abstract-class-instantiated
-        return StreetLoader(context.filter, unicode(context.parent))
+        return StreetLoader(context.filter, text_type(context.parent))
 
 
 class HouseSearchAction(ParentMixin, ActionBase):

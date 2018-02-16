@@ -43,6 +43,9 @@ disable=
     duplicate-code,
     no-member,
     bad-continuation,
+    inconsistent-return-statements,
+    ungrouped-imports,
+    keyword-arg-before-vararg,
 
 [REPORTS]
 

@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from unittest import skipUnless
@@ -6,6 +7,7 @@ from uuid import uuid4
 
 from django import test
 from django.conf import settings
+from six import text_type
 
 from m3_fias.backends.django_rest_fias.proxy.utils import _guid2str
 from m3_fias.backends.django_rest_fias.proxy.utils import find_address_objects
@@ -26,11 +28,11 @@ class TestCase(test.SimpleTestCase):
     def test__guid2str(self):
         self.assertIsInstance(
             _guid2str('e2e21636-929a-4c51-b7b5-06ac067ce3f5'),
-            unicode
+            text_type
         )
         self.assertIsInstance(
             _guid2str(uuid4()),
-            unicode
+            text_type
         )
         self.assertRaises(ValueError, _guid2str, '23458976')
         self.assertRaises(ValueError, _guid2str, 23458976)
@@ -64,14 +66,14 @@ class TestCase(test.SimpleTestCase):
             )
 
         self.assertEqual(len(result), 2)
-        self.assertItemsEqual(get_param_values('guid'), (
+        self.assertEqual(set(get_param_values('guid')), {
             'c4b23ba4-e4ba-47d6-9000-4d502ef7bd5a',
             'e2e21636-929a-4c51-b7b5-06ac067ce3f5',
-        ))
-        self.assertItemsEqual(get_param_values('formal_name'), (
+        })
+        self.assertEqual(set(get_param_values('formal_name')), {
             'Вокзальная',
             'Вокзальная магистраль',
-        ))
+        })
 
         result = tuple(find_address_objects(
             filter_string='Вокзальная магистраль',

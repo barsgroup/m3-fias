@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from abc import ABCMeta
@@ -7,9 +8,13 @@ from abc import abstractproperty
 from importlib import import_module
 from itertools import chain
 from itertools import count
-from itertools import imap
 from uuid import UUID
-import httplib
+
+from six import text_type
+from six import with_metaclass
+from six.moves import http_client
+from six.moves import map
+from six.moves import range
 
 from m3_fias.constants import FIAS_LEVELS_PLACE
 from m3_fias.constants import FIAS_LEVELS_STREET
@@ -24,7 +29,7 @@ from .server import server
 def _guid2str(guid):
     if guid:
         try:
-            return unicode(guid if isinstance(guid, UUID) else UUID(guid))
+            return text_type(guid if isinstance(guid, UUID) else UUID(guid))
         except (AttributeError, TypeError, ValueError):
             raise ValueError(guid)
 # -----------------------------------------------------------------------------
@@ -158,11 +163,9 @@ class UIHouseMapper(ObjectMapper):
 # Загрузчики данных с сервера django-rest-fias.
 
 
-class LoaderBase(object):
+class LoaderBase(with_metaclass(ABCMeta, object)):
 
     """Базовый класс для загрузчиков объектов ФИАС."""
-
-    __metaclass__ = ABCMeta
 
     def __init__(self, filter_string):
         """Инициализация экземпляра класса.
@@ -197,7 +200,7 @@ class LoaderBase(object):
         params['page'] = page
 
         drf_response = server.get(self._path, params)
-        if drf_response.status_code == httplib.OK:
+        if drf_response.status_code == http_client.OK:
             result = drf_response.json()
         else:
             result = None
@@ -253,7 +256,7 @@ class LoaderBase(object):
         if page is None:
             pages = count(start=1)
         else:
-            pages = xrange(page, page + 1)
+            pages = range(page, page + 1)
 
         params = self._get_params()
 
@@ -278,7 +281,7 @@ class LoaderBase(object):
 
         :rtype: itertools.imap
         """
-        return imap(self._build_result, self.load_raw(page))
+        return map(self._build_result, self.load_raw(page))
 
     @abstractmethod
     def _sort_key(self, object_data):
@@ -329,7 +332,7 @@ class AddressObjectLoaderBase(LoaderBase):
 
     @cached_property
     def _fields(self):
-        return self._mapper_class.fields_map.keys()
+        return list(self._mapper_class.fields_map.keys())
 
     @abstractproperty
     def _levels(self):
@@ -344,16 +347,19 @@ class AddressObjectLoaderBase(LoaderBase):
         :rtype: dict
         """
         result = super(AddressObjectLoaderBase, self)._get_params()
-        result['scan'] = self.filter_string
+        result['scan'] = ','.join(
+            word.replace('.', '')
+            for word in self.filter_string.split()
+        )
         if self._levels:
-            result['aolevel'] = ','.join(imap(str, self._levels))
+            result['aolevel'] = ','.join(map(str, self._levels))
         return result
 
     def _filter(self, object_data):
         return True
 
     def _sort_key(self, object_data):
-        return object_data['fullName']
+        return object_data['fullName'] or ''
 
 
 class AddressObjectLoader(AddressObjectLoaderBase):
@@ -384,7 +390,7 @@ class AddressObjectLoader(AddressObjectLoaderBase):
     def _get_params(self):
         result = super(AddressObjectLoader, self)._get_params()
         if self._parent_guid:
-            result['parentguid'] = unicode(self._parent_guid)
+            result['parentguid'] = text_type(self._parent_guid)
         return result
 
 
@@ -514,7 +520,7 @@ class HouseLoader(LoaderBase):
         int_part = ''.join(ch for ch in number if ch.isdigit())
         str_part = number[len(int_part):]
 
-        return int(int_part) if int_part else None, str_part
+        return int(int_part) if int_part else -1, str_part
 
     def _sort_key(self, object_data):
         return tuple(chain(*(
@@ -584,7 +590,7 @@ def get_address_object(guid):
     assert guid is not None
 
     response = server.get('/{}/'.format(guid))
-    if response.status_code == httplib.OK:
+    if response.status_code == http_client.OK:
         response_data = response.json()
         mapped_data = AddressObjectMapper(response_data)
         result = AddressObject(**mapped_data)
@@ -628,12 +634,9 @@ def get_house(guid, ao_guid):
     assert ao_guid is not None
 
     response = server.get('/{}/houses/{}/'.format(ao_guid, guid))
-    if response.status_code == httplib.OK:
-        result = House(
-            **HouseMapper(
-                response.json()
-            )
-        )
+    if response.status_code == http_client.OK:
+        house_data = HouseMapper(response.json())
+        result = House(**house_data)
     else:
         result = None
 
