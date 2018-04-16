@@ -161,6 +161,7 @@ class AddressFields(BaseExtComponent):
             force_selection=self.fias_only,
             min_chars=2,
             empty_text='Название субъекта/города/населенного пункта',
+            read_only=self.read_only,
             fields=[
                 'guid',
                 'level',
@@ -202,7 +203,7 @@ class AddressFields(BaseExtComponent):
         return ExtStringField(
             name=self._names_of_fields['zip_code'],
             label=self._labels_text['zip_code'],
-            read_only=self.fias_only,
+            read_only=self.fias_only or self.read_only,
             width=50,
         )
 
@@ -222,6 +223,7 @@ class AddressFields(BaseExtComponent):
             force_selection=self.fias_only,
             min_chars=2,
             empty_text='Название улицы/микрорайона',
+            read_only=self.read_only,
             fields=[
                 'guid',
                 'level',
@@ -270,6 +272,7 @@ class AddressFields(BaseExtComponent):
             min_chars=1,
             width=40,
             list_width=150,
+            read_only=self.read_only,
             fields=[
                 'guid',
                 'houseNumber',
@@ -298,7 +301,7 @@ class AddressFields(BaseExtComponent):
         result = ExtStringField(
             name=self._names_of_fields['building_number'],
             label=self._labels_text['building_number'],
-            read_only=self.fias_only,
+            read_only=self.fias_only or self.read_only,
             width=40,
         )
 
@@ -313,7 +316,7 @@ class AddressFields(BaseExtComponent):
         result = ExtStringField(
             name=self._names_of_fields['structure_number'],
             label=self._labels_text['structure_number'],
-            read_only=self.fias_only,
+            read_only=self.fias_only or self.read_only,
             width=40,
         )
 
@@ -340,6 +343,7 @@ class AddressFields(BaseExtComponent):
             name=self._names_of_fields['flat_number'],
             label=self._labels_text['flat_number'],
             width=40,
+            read_only=self.read_only
         )
 
     @cached_property
@@ -355,7 +359,7 @@ class AddressFields(BaseExtComponent):
             name=self._names_of_fields['full_address'],
             label=self._labels_text['full_address'],
             height=36,
-            read_only=self.fias_only,
+            read_only=self.fias_only or self.read_only,
         )
 
     @property
