@@ -46,6 +46,7 @@ disable=
     inconsistent-return-statements,
     ungrouped-imports,
     keyword-arg-before-vararg,
+    wrong-import-order,
 
 [REPORTS]
 

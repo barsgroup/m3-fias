@@ -19,7 +19,7 @@ PROJECT_DIR = dirname(dirname(abspath(__file__)))
 SRC_DIR = join(PROJECT_DIR, 'src')
 
 
-#: Папка с исходными кода проекта.
+#: Папка с тестами.
 TESTS_DIR = join(PROJECT_DIR, 'tests')
 
 

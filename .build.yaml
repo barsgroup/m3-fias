@@ -1,0 +1,7 @@
+environ:
+
+tasks:
+  docker_tasks:
+    type: docker
+    execute: docker/ci
+    required: True

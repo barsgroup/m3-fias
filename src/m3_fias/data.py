@@ -45,7 +45,7 @@ class ReadOnlyAttribute(object):
 
 class ObjectMeta(ABCMeta):
 
-    def __new__(mcs, name, bases, namespace):  # @NoSelf
+    def __new__(mcs, name, bases, namespace, **kwargs):  # @NoSelf
         cls = ABCMeta.__new__(mcs, name, bases, namespace)
 
         fields = namespace['fields']
