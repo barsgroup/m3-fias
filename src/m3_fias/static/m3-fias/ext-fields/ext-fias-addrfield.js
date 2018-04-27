@@ -23,7 +23,14 @@ Ext.fias.AddrField = Ext.extend(Ext.Container, {
                 {name: 'place_address'}
             ],
         });
-        place_store.baseParams['levels'] = [1, 4, 6];
+        /*
+            Уровни фиас в поле Населенный пункт:
+            1 - область, край, республика, город
+            4 - город, сел.поселение
+            6 - поселок, деревня, село
+            65 - микрорайоны
+         */
+        place_store.baseParams['levels'] = [1, 4, 6, 65];
 
         if (params.place_record != '' && params.place_record != undefined) {
             var rec = Ext.util.JSON.decode(params.place_record);
