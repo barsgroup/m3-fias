@@ -1,4 +1,8 @@
 graft src
+
+global-exclude *.pyc
+global-exclude __pycache__
+
 include README.rst
 include version.conf
 include requirements/_base.txt requirements/prod.txt
