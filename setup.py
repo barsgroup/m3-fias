@@ -5,18 +5,32 @@ from os.path import dirname
 from os.path import isabs
 from os.path import join
 from os.path import relpath
+import re
 
-from pip.download import PipSession
-from pip.req.req_file import parse_requirements
+from pkg_resources import Requirement
 from setuptools import find_packages
 from setuptools import setup
 
 
-def _get_requirements(file_path):
-    pip_session = PipSession()
-    requirements = parse_requirements(file_path, session=pip_session)
+_COMMENT_RE = re.compile(r'(^|\s)+#.*$')
 
-    return tuple(str(requirement.req) for requirement in requirements)
+
+def _get_requirements(file_path):
+    with open(file_path, 'r') as file:
+        for line in file:
+            line = _COMMENT_RE.sub('', line)
+            line = line.strip()
+            if line.startswith('-r '):
+                for req in  _get_requirements(
+                    join(dirname(abspath(file_path)), line[3:])
+                ):
+                    yield req
+            elif line:
+                req = Requirement(line)
+                req_str = req.name + str(req.specifier)
+                if req.marker:
+                    req_str += '; ' + str(req.marker)
+                yield req_str
 
 
 def _read(file_path):
@@ -33,7 +47,7 @@ setup(
     author_email='bars@bars-open.ru',
     package_dir={'': 'src'},
     packages=find_packages('src'),
-    install_requires=_get_requirements('requirements/prod.txt'),
+    install_requires=tuple(_get_requirements('requirements/prod.txt')),
     long_description=_read('README.rst'),
     include_package_data=True,
     classifiers=[
@@ -64,7 +78,7 @@ setup(
         'http://pypi.bars-open.ru/simple/m3-builder',
     ),
     setup_requires=(
-        'm3-builder>=1.1,<2',
+        'm3-builder>=1.2,<2',
     ),
     set_build_info=dirname(__file__),
 )
