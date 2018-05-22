@@ -1,10 +1,7 @@
 # coding: utf-8
-from os import chdir
 from os.path import abspath
 from os.path import dirname
-from os.path import isabs
 from os.path import join
-from os.path import relpath
 import re
 
 from pkg_resources import Requirement
