@@ -30,4 +30,6 @@ nice -n 19 /bin/bash $SCRIPT_DIR/task5-tox.sh &
 for pid in `jobs -p`; do
     wait $pid
 done
+
+nice -n 19 /bin/bash $SCRIPT_DIR/task-done.sh
 # -----------------------------------------------------------------------------

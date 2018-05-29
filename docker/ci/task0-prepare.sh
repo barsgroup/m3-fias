@@ -1,5 +1,4 @@
 #!/bin/bash
-# Запуск проверки правильности сортировки импортов.
 source `dirname $BASH_SOURCE`/tasks-config.sh
 
 LOGS_DIR=$LOGS_DIR/prepare
