@@ -1043,7 +1043,9 @@ Ext.m3.fias.RowsAddressView = Ext.extend(Ext.m3.fias.AddressViewBase, {
             this.fields.houseNumberField,
             this.labelsWidth.house,
             {
-                'flex': 0
+                'flex': 0,
+                // Проставляем ширину в ручную т.к. без этого поля съезжает
+                'width': 80
             }
         );
         this.buildingFieldContainer = this.formed(
