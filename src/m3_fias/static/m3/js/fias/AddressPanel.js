@@ -727,31 +727,32 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
 
             if (this.hasStreetField() && !this.isStreetEmpty()) {
                 addressParts.push(this.streetNameField.getValue());
-
-                if (this.hasHouseField() && !this.isHouseEmpty()) {
-                    addressParts.push(
-                        'д.' + this.houseNumberField.getValue()
-                    );
-                }
-
-                if (this.hasHouseField() && !this.isBuildingEmpty()) {
-                    addressParts.push(
-                        'корп.' + this.buildingNumberField.getValue()
-                    );
-                }
-
-                if (this.hasHouseField() && !this.isStructureEmpty()) {
-                    addressParts.push(
-                        'стр.' + this.structureNumberField.getValue()
-                    );
-                }
-
-                if (this.hasFlatField() && !this.isFlatEmpty()) {
-                    addressParts.push(
-                        'кв.' + this.flatNumberField.getValue()
-                    );
-                }
             }
+            // значение дома может быть выбрано без указания улицы
+            if (this.hasHouseField() && !this.isHouseEmpty()) {
+                addressParts.push(
+                    'д.' + this.houseNumberField.getValue()
+                );
+            }
+
+            if (this.hasHouseField() && !this.isBuildingEmpty()) {
+                addressParts.push(
+                    'корп.' + this.buildingNumberField.getValue()
+                );
+            }
+
+            if (this.hasHouseField() && !this.isStructureEmpty()) {
+                addressParts.push(
+                    'стр.' + this.structureNumberField.getValue()
+                );
+            }
+
+            if (this.hasFlatField() && !this.isFlatEmpty()) {
+                addressParts.push(
+                    'кв.' + this.flatNumberField.getValue()
+                );
+            }
+
         }
 
         return addressParts.join(', ');
