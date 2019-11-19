@@ -31,7 +31,7 @@ def _get_requirements(file_path):
 
 
 def _read(file_path):
-    with open(file_path, 'r') as infile:
+    with open(file_path, encoding='utf-8') as infile:
         return infile.read()
 
 
