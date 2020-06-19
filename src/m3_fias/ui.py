@@ -162,6 +162,7 @@ class AddressFields(BaseExtComponent):
             min_chars=2,
             empty_text='Название субъекта/города/населенного пункта',
             read_only=self.read_only,
+            allow_blank=self.allow_blank,
             fields=[
                 'guid',
                 'level',
@@ -438,6 +439,15 @@ class AddressFields(BaseExtComponent):
                     self.field__place_guid.value
                 )
             )
+
+    def find_by_name(self, name):
+        """Поиск экземпляра поля по имени.
+
+        Метод Ext-контейнеров, позволяющий рекурсивно искать вложенные элементы
+        """
+        for item in self.items:
+            if hasattr(item, 'name') and name == getattr(item, 'name'):
+                return item
 
     def render_base_config(self):
         super(AddressFields, self).render_base_config()

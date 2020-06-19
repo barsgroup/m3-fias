@@ -539,7 +539,10 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
                 }
             }
 
-            this.clearStreet();
+            if (this.hasStreetField()) {
+                this.clearStreet();
+            }
+
             this.updateFullAddress();
             this.switchFields();
             this.placeNameField.valueWasSelected = false;
@@ -558,7 +561,10 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         this.zipCodeField.setValue(record.get('postalCode'));
         this.zipCodeField.valueSource = 'place';
 
-        this.clearStreet();
+        if (this.hasStreetField()) {
+            this.clearStreet();
+        }
+
         this.updateFullAddress();
         this.switchFields();
 
@@ -585,7 +591,10 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
                 }
             }
 
-            this.clearHouse();
+            if (this.hasHouseField()) {
+                this.clearHouse();
+            }
+
             this.updateFullAddress();
             this.switchFields();
             this.streetNameField.valueWasSelected = false;
@@ -604,7 +613,10 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         this.zipCodeField.setValue(record.get('postalCode'));
         this.zipCodeField.valueSource = 'street';
 
-        this.clearHouse();
+        if (this.hasHouseField()) {
+            this.clearHouse();
+        }
+
         this.updateFullAddress();
         this.switchFields();
 
