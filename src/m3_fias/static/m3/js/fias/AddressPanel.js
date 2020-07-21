@@ -289,7 +289,10 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         if (this.fiasOnly) {
             return !this.placeGUIDField.getValue();
         } else {
-            return !this.placeNameField.getValue();
+            return (
+                !this.placeNameField.getValue() &&
+                !this.placeGUIDField.getValue()
+            );
         }
     },
 
@@ -301,7 +304,10 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         if (this.fiasOnly) {
             return !this.streetGUIDField.getValue();
         } else {
-            return !this.streetNameField.getValue();
+            return (
+                !this.streetNameField.getValue() &&
+                !this.streetGUIDField.getValue()
+            );
         }
     },
 
@@ -312,7 +318,8 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
             return (
                 !this.houseNumberField.getValue() &&
                 !this.buildingNumberField.getValue() &&
-                !this.structureNumberField.getValue()
+                !this.structureNumberField.getValue() &&
+                !this.houseGUIDField.getValue()
             );
         }
     },

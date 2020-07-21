@@ -7,6 +7,8 @@
 .settings
 .coverage
 
+venv
+
 *.log
 
 # python specific
