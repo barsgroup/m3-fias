@@ -90,43 +90,46 @@ class Backend(BackendBase):
         return self._pack.house_search_action.get_absolute_url()
 
     def find_address_objects(self, filter_string, levels=None,
-                             parent_guid=None):
+                             parent_guid=None, timeout=None):
         """Возвращает адресные объекты, соответствующие параметрам поиска.
 
         :param unicode filter_string: Строка поиска.
         :param levels: Уровни адресных объектов, среди которых нужно
             осуществлять поиск.
         :param parent_guid: GUID родительского объекта.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: generator
         """
-        return find_address_objects(filter_string, levels, parent_guid)
+        return find_address_objects(filter_string, levels, parent_guid, timeout)
 
-    def get_address_object(self, guid):
+    def get_address_object(self, guid, timeout=None):
         """Возвращает адресный объект ФИАС по его GUID-у.
 
         :param guid: GUID адресного объекта ФИАС.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: m3_fias.data.AddressObject
         """
-        return get_address_object(guid)
+        return get_address_object(guid, timeout)
 
     def find_house(self, ao_guid, house_number, building_number='',
-                   structure_number=''):
+                   structure_number='', timeout=None):
         """Возвращает информацию о здании по его номеру.
 
         :param ao_guid: GUID адресного объекта.
         :param unicode house_number: Номер дома.
         :param unicode building_number: Номер корпуса.
         :param unicode structure_number: Номер строения.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: m3_fias.data.House or NoneType
         """
         return find_house(
-            ao_guid, house_number, building_number, structure_number
+            ao_guid, house_number, building_number, structure_number, timeout
         )
 
-    def get_house(self, guid, ao_guid):  # pylint: disable=signature-differs
+    def get_house(self, guid, ao_guid, timeout=None):  # pylint: disable=signature-differs
         """Возвращает информацию о здании по его GUID-у в ФИАС.
 
         .. important::
@@ -137,7 +140,8 @@ class Backend(BackendBase):
 
         :param guid: GUID здания.
         :param ao_guid: GUID адресного объекта, в котором находится здание.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: m3_fias.data.House
         """
-        return get_house(guid, ao_guid)
+        return get_house(guid, ao_guid, timeout)

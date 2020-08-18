@@ -74,54 +74,58 @@ def correct_keyboard_layout(text):
     return result
 
 
-def find_address_objects(filter_string, levels=None, parent_guid=None):
+def find_address_objects(filter_string, levels=None,
+                         parent_guid=None, timeout=None):
     """Возвращает адресные объекты, соответствующие параметрам поиска.
 
     :param unicode filter_string: Строка поиска.
     :param levels: Уровни адресных объектов, среди которых нужно
         осуществлять поиск.
     :param parent_guid: GUID родительского объекта.
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: generator
     """
     from m3_fias import config
 
     return config.backend.find_address_objects(
-        filter_string, levels, parent_guid
+        filter_string, levels, parent_guid, timeout
     )
 
 
-def get_address_object(guid):
+def get_address_object(guid, timeout=None):
     """Возвращает адресный объект ФИАС по его GUID-у.
 
     :param guid: GUID адресного объекта ФИАС.
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: m3_fias.data.AddressObject
     """
     from m3_fias import config
 
-    return config.backend.get_address_object(guid)
+    return config.backend.get_address_object(guid, timeout)
 
 
 def find_house(ao_guid, house_number='', building_number='',
-               structure_number=''):
+               structure_number='', timeout=None):
     """Возвращает информацию о здании по его номеру.
 
     :param ao_guid: GUID адресного объекта.
     :param unicode house_number: Номер дома.
     :param unicode building_number: Номер корпуса.
     :param unicode structure_number: Номер строения.
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: m3_fias.data.House or NoneType
     """
     from m3_fias import config
 
     return config.backend.find_house(
-        ao_guid, house_number, building_number, structure_number
+        ao_guid, house_number, building_number, structure_number, timeout
     )
 
 
-def get_house(guid, ao_guid=None):
+def get_house(guid, ao_guid=None, timeout=None):
     """Возвращает информацию о здании по его GUID-у в ФИАС.
 
     .. important::
@@ -133,12 +137,13 @@ def get_house(guid, ao_guid=None):
     :param guid: GUID здания.
     :param ao_guid: GUID адресного объекта, в котором находится здание.
         Необходимость указывать GUID определяется используемым бэкендом.
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: m3_fias.data.House
     """
     from m3_fias import config
 
-    return config.backend.get_house(guid, ao_guid)
+    return config.backend.get_house(guid, ao_guid, timeout)
 
 
 def get_address_object_name(address_object):
@@ -198,7 +203,7 @@ def get_house_name(house):
     return ', '.join(names)
 
 
-def get_full_name(obj):
+def get_full_name(obj, timeout=None):
     """Возвращает полное наименование адресного объекта или здания.
 
     Примеры:
@@ -208,6 +213,7 @@ def get_full_name(obj):
       * д. 1 корп. 3 стр. 2
 
     :type obj: m3_fias.data.AddressObject or m3_fias.data.House
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: unicode
     """
@@ -222,12 +228,12 @@ def get_full_name(obj):
             names.insert(0, get_address_object_name(obj))
 
             if obj.parent_guid:
-                obj = get_address_object(obj.parent_guid)
+                obj = get_address_object(obj.parent_guid, timeout)
             else:
                 break
 
     elif isinstance(obj, House):
-        address_object = get_address_object(obj.parent_guid)
+        address_object = get_address_object(obj.parent_guid, timeout)
 
         if (
             postal_code is None and
@@ -237,7 +243,7 @@ def get_full_name(obj):
             postal_code = obj.postal_code
 
         names.extend((
-            get_full_name(address_object),
+            get_full_name(address_object, timeout),
             get_house_name(obj),
         ))
 
