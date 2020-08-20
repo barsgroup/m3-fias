@@ -119,6 +119,9 @@ class AddressFields(BaseExtComponent):
         # Флаг, определяющий отображение поля с полным адресом.
         self.with_full_address = None
 
+        # Timeout запросов к серверу ФИАС.
+        self.timeout = None
+
         super(AddressFields, self).__init__(*args, **kwargs)
         self.init_component(*args, **kwargs)
 
@@ -404,7 +407,10 @@ class AddressFields(BaseExtComponent):
         :rtype: m3_fias.data.AddressObject
         """
         if self.field__place_guid.value:
-            return get_address_object(self.field__place_guid.value)
+            return get_address_object(
+                self.field__place_guid.value,
+                self.timeout,
+            )
 
     @cached_property
     def street(self):
@@ -415,7 +421,10 @@ class AddressFields(BaseExtComponent):
         assert self.level in (UI_LEVEL_STREET, UI_LEVEL_HOUSE, UI_LEVEL_FLAT)
 
         if self.field__street_guid.value:
-            return get_address_object(self.field__street_guid.value)
+            return get_address_object(
+                self.field__street_guid.value,
+                self.timeout,
+            )
 
     @cached_property
     def house(self):
@@ -437,7 +446,8 @@ class AddressFields(BaseExtComponent):
                 ao_guid=(
                     self.field__street_guid.value or
                     self.field__place_guid.value
-                )
+                ),
+                timeout=self.timeout,
             )
 
     def find_by_name(self, name):

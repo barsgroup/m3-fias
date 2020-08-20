@@ -167,12 +167,14 @@ class LoaderBase(with_metaclass(ABCMeta, object)):
 
     """Базовый класс для загрузчиков объектов ФИАС."""
 
-    def __init__(self, filter_string):
+    def __init__(self, filter_string, **kwargs):
         """Инициализация экземпляра класса.
 
         :param unicode filter_string: Строка для фильтрации объектов.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
         """
         self.filter_string = filter_string
+        self.timeout = kwargs.get('timeout')
 
     @abstractproperty
     def _path(self):
@@ -199,7 +201,7 @@ class LoaderBase(with_metaclass(ABCMeta, object)):
         params = params.copy()
         params['page'] = page
 
-        drf_response = server.get(self._path, params)
+        drf_response = server.get(self._path, params, timeout=self.timeout)
         if drf_response.status_code == http_client.OK:
             result = drf_response.json()
         else:
@@ -375,14 +377,15 @@ class AddressObjectLoader(AddressObjectLoaderBase):
 
     _mapper_class = AddressObjectMapper
 
-    def __init__(self, filter_string, levels=None, parent_guid=None):
+    def __init__(self, filter_string, levels=None, parent_guid=None, **kwargs):
         """Инициализация экземпляра класса.
 
         :param unicode filter_string: Строка для фильтрации объектов.
         :param levels: Уровни адресных объектов.
         :param parent_guid: GUID родительского объекта.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
         """
-        super(AddressObjectLoader, self).__init__(filter_string)
+        super(AddressObjectLoader, self).__init__(filter_string, **kwargs)
 
         self._levels = levels
         self._parent_guid = _guid2str(parent_guid)
@@ -443,15 +446,15 @@ class StreetLoader(AddressObjectLoaderBase):
 
     _mapper_class = UIAddressObjectMapper
 
-    def __init__(self, filter_string, parent_guid):
+    def __init__(self, filter_string, parent_guid, **kwargs):
         """Инициализация экземпляра класса.
 
         :param unicode filter_string: Строка для фильтрации объектов.
-
         :param basestring parent_guid: GUID адресного объекта, в котором
             находится улица.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
         """
-        super(StreetLoader, self).__init__(filter_string)
+        super(StreetLoader, self).__init__(filter_string, **kwargs)
 
         self.parent_guid = _guid2str(parent_guid)
 
@@ -487,7 +490,7 @@ class HouseLoader(LoaderBase):
         'postalCode',
     )
 
-    def __init__(self, address_object_guid, filter_string):
+    def __init__(self, address_object_guid, filter_string, **kwargs):
         """Инициализация класса.
 
         :param basestring address_object_guid: GUID адресного объекта, в
@@ -498,9 +501,11 @@ class HouseLoader(LoaderBase):
             ``None`` указывает на необходимость загрузки сведений обо всех
             зданиях адресного объекта.
         :type filter_string: unicode or NoneType
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
         """
         super(HouseLoader, self).__init__(
-            filter_string.lower() if filter_string else None
+            filter_string.lower() if filter_string else None,
+            **kwargs
         )
 
         self.address_object_guid = _guid2str(address_object_guid)
@@ -574,12 +579,13 @@ class HouseLoader(LoaderBase):
 # Функции для создания объектов m3-fias на основе данных django-rest-fias.
 
 
-def get_address_object(guid):
+def get_address_object(guid, timeout=None):
     """Возвращает адресный объект, загруженный с сервера ФИАС.
 
     Если адресный объект не найден, возвращает ``None``.
 
     :param guid: GUID адресного объекта ФИАС.
+    :param float timeout: timeout запроса к серверу ФИАС в секундах.
 
     :rtype: m3_fias.data.AddressObject or NoneType
 
@@ -589,7 +595,7 @@ def get_address_object(guid):
     guid = _guid2str(guid)
     assert guid is not None
 
-    response = server.get('/{}/'.format(guid))
+    response = server.get('/{}/'.format(guid), timeout=timeout)
     if response.status_code == http_client.OK:
         response_data = response.json()
         mapped_data = AddressObjectMapper(response_data)
@@ -600,22 +606,24 @@ def get_address_object(guid):
     return result
 
 
-def find_address_objects(filter_string, levels=None, parent_guid=None):
+def find_address_objects(filter_string, levels=None,
+                         parent_guid=None, timeout=None):
     """Возвращает адресные объекты, соответствующие параметрам поиска.
 
     :param unicode filter_string: Строка поиска.
     :param levels: Уровни адресных объектов, среди которых нужно
         осуществлять поиск.
     :param parent_guid: GUID родительского объекта.
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: generator
     """
     return AddressObjectLoader(
-        filter_string, levels, parent_guid
+        filter_string, levels, parent_guid, timeout=timeout
     ).load_results()
 
 
-def get_house(guid, ao_guid):
+def get_house(guid, ao_guid, timeout=None):
     """Возвращает информацию о здании по его GUID-у в ФИАС.
 
     .. important::
@@ -626,6 +634,7 @@ def get_house(guid, ao_guid):
 
     :param guid: GUID здания.
     :param ao_guid: GUID адресного объекта, в котором находится здание.
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: m3_fias.data.House
     """
@@ -633,7 +642,10 @@ def get_house(guid, ao_guid):
     assert guid is not None
     assert ao_guid is not None
 
-    response = server.get('/{}/houses/{}/'.format(ao_guid, guid))
+    response = server.get(
+        '/{}/houses/{}/'.format(ao_guid, guid),
+        timeout=timeout,
+    )
     if response.status_code == http_client.OK:
         house_data = HouseMapper(response.json())
         result = House(**house_data)
@@ -644,13 +656,14 @@ def get_house(guid, ao_guid):
 
 
 def find_house(ao_guid, house_number='', building_number='',
-               structure_number=''):
+               structure_number='', timeout=None):
     """Возвращает информацию о здании по его номеру.
 
     :param ao_guid: GUID адресного объекта.
     :param unicode house_number: Номер дома.
     :param unicode building_number: Номер корпуса.
     :param unicode structure_number: Номер строения.
+    :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
     :rtype: m3_fias.data.House or NoneType
     """
@@ -661,7 +674,9 @@ def find_house(ao_guid, house_number='', building_number='',
     houses = tuple(
         house_info['guid']
         for house_info in HouseLoader(
-            ao_guid, house_number or building_number or structure_number
+            ao_guid,
+            house_number or building_number or structure_number,
+            timeout=timeout,
         ).load()
         if (
             house_info['guid'] and
@@ -672,7 +687,7 @@ def find_house(ao_guid, house_number='', building_number='',
     )
 
     if len(houses) == 1:
-        result = get_house(houses[0], ao_guid)
+        result = get_house(houses[0], ao_guid, timeout)
     else:
         result = None
 

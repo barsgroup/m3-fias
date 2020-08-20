@@ -57,41 +57,44 @@ class BackendBase(with_metaclass(ABCMeta, object)):
 
     @abstractmethod
     def find_address_objects(self, filter_string, levels=None,
-                             parent_guid=None):
+                             parent_guid=None, timeout=None):
         """Возвращает адресные объекты, соответствующие параметрам поиска.
 
         :param unicode filter_string: Строка поиска.
         :param levels: Уровни адресных объектов, среди которых нужно
             осуществлять поиск.
         :param parent_guid: GUID родительского объекта.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: generator
         """
 
     @abstractmethod
-    def get_address_object(self, guid):
+    def get_address_object(self, guid, timeout=None):
         """Возвращает адресный объект ФИАС по его GUID-у.
 
         :param guid: GUID адресного объекта ФИАС.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: m3_fias.data.AddressObject
         """
 
     @abstractmethod
     def find_house(self, ao_guid, house_number, building_number='',
-                   structure_number=''):
+                   structure_number='', timeout=None):
         """Возвращает информацию о здании по его номеру.
 
         :param ao_guid: GUID адресного объекта.
         :param unicode house_number: Номер дома.
         :param unicode building_number: Номер корпуса.
         :param unicode structure_number: Номер строения.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: m3_fias.data.House or NoneType
         """
 
     @abstractmethod
-    def get_house(self, guid, ao_guid=None):
+    def get_house(self, guid, ao_guid=None, timeout=None):
         """Возвращает информацию о здании по его GUID-у в ФИАС.
 
         .. important::
@@ -103,6 +106,7 @@ class BackendBase(with_metaclass(ABCMeta, object)):
         :param guid: GUID здания.
         :param ao_guid: GUID адресного объекта, в котором находится здание.
             Необходимость указывать GUID определяется используемым бэкендом.
+        :param float timeout: Timeout запросов к серверу ФИАС в секундах.
 
         :rtype: m3_fias.data.House
         """

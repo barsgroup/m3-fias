@@ -21,6 +21,7 @@ class ServerBase(with_metaclass(ABCMeta, object)):
 
     def __init__(self, **kwargs):
         self._base_url = kwargs['url']
+        self._timeout = kwargs.get('timeout')
 
     @property
     def base_url(self):
@@ -33,7 +34,7 @@ class ServerBase(with_metaclass(ABCMeta, object)):
         :rtype: requests.sessions.Session
         """
 
-    def get(self, path, params=None):
+    def get(self, path, params=None, timeout=None):
         """Возвращает ответ на HTTP-запрос к API сервера ФИАС.
 
         :rtype: requests.models.Response
@@ -41,6 +42,7 @@ class ServerBase(with_metaclass(ABCMeta, object)):
         response = self._session.get(
             self.base_url.rstrip('/') + path,
             params=params or {},
+            timeout=timeout or self._timeout,
         )
         return response
 
@@ -64,7 +66,7 @@ class CachingMixin(object):
         self._cache_key_prefix = kwargs.get('cache_key_prefix', 'm3-fias')
         self._cache_timeout = kwargs.get('cache_timeout', 24 * 60 * 60)
 
-    def get(self, path, params=None):
+    def get(self, path, params=None, timeout=None):
         hasher = hashlib.sha1()
         hasher.update(':'.join((
             self._cache_key_prefix,
@@ -75,7 +77,7 @@ class CachingMixin(object):
         if cache_key in self._cache:
             response = self._cache.get(cache_key)
         else:
-            response = super(CachingMixin, self).get(path, params)
+            response = super(CachingMixin, self).get(path, params, timeout)
 
             if response.status_code == http_client.OK:
                 self._cache.set(cache_key, response,)
@@ -90,6 +92,7 @@ class SimpleServer(ServerBase):
     Параметры:
 
         * ``url`` --- URL API сервера ФИАС.
+        * ``timeout`` --- timeout запроса к серверу ФИАС в секундах.
     """
 
     @cached_property
@@ -108,6 +111,7 @@ class SimpleCachingServer(CachingMixin, SimpleServer):
     Параметры:
 
         * ``url`` --- URL API сервера ФИАС.
+        * ``timeout`` --- timeout запроса к серверу ФИАС в секундах.
         * ``cache`` --- объект кэша. Рекомендуется использовать
           ```django.core.cache.cache`.
         * ``cache_key_prefix`` --- префикс для ключей в кэше.
@@ -122,6 +126,7 @@ class OAuth2Server(ServerBase):  # pragma: no cover
     Параметры:
 
         * ``url`` --- URL API сервера ФИАС.
+        * ``timeout`` --- timeout запроса к серверу ФИАС в секундах.
         * ``token_url`` --- Token endpoint URL, must use HTTPS.
         * ``client_id``.
         * ``user_name`` --- Username used by LegacyApplicationClients..
@@ -169,6 +174,7 @@ class OAuth2CachingServer(CachingMixin, OAuth2Server):
     Параметры:
 
         * ``url`` --- URL API сервера ФИАС.
+        * ``timeout`` --- timeout запроса к серверу ФИАС в секундах.
         * ``token_url`` --- Token endpoint URL, must use HTTPS.
         * ``client_id``.
         * ``user_name`` --- Username used by LegacyApplicationClients..
@@ -193,6 +199,7 @@ def get_server():
     должен содержать словарь со следующими ключами:
 
         - ``URL`` --- URL API сервера ФИАС.
+        - ``TIMEOUT`` --- timeout запроса к серверу ФИАС в секундах.
         - ``USE_CACHE`` --- определяет необходимость кеширования HTTP-запросов
           к серверу django-rest-fias. Значение по умолчанию: ``False``
         - ``OAUTH2`` --- параметры OAuth2 (если не указан, то аутентификация
@@ -214,6 +221,7 @@ def get_server():
         if 'OAUTH2' in settings.FIAS:  # pragma: no cover
             result = OAuth2CachingServer(
                 url=settings.FIAS['URL'],
+                timeout=settings.FIAS.get('TIMEOUT'),
                 cache=cache,
                 token_url=settings.FIAS['OAUTH2']['TOKEN_URL'],
                 client_id=settings.FIAS['OAUTH2']['CLIENT_ID'],
@@ -225,6 +233,7 @@ def get_server():
         else:
             result = SimpleCachingServer(
                 url=settings.FIAS['URL'],
+                timeout=settings.FIAS.get('TIMEOUT'),
                 cache=cache,
             )
 
@@ -232,6 +241,7 @@ def get_server():
         if 'OAUTH2' in settings.FIAS:  # pragma: no cover
             result = OAuth2Server(
                 url=settings.FIAS['URL'],
+                timeout=settings.FIAS.get('TIMEOUT'),
                 token_url=settings.FIAS['OAUTH2']['TOKEN_URL'],
                 client_id=settings.FIAS['OAUTH2']['CLIENT_ID'],
                 user_name=settings.FIAS['OAUTH2'].get('USER_NAME'),
@@ -242,6 +252,7 @@ def get_server():
         else:
             result = SimpleServer(
                 url=settings.FIAS['URL'],
+                timeout=settings.FIAS.get('TIMEOUT'),
             )
 
     return result
