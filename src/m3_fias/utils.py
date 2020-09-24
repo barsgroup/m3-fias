@@ -220,6 +220,17 @@ def get_full_name(obj, timeout=None):
     postal_code = None
     names = []
 
+    if not isinstance(obj, (House, AddressObject)):
+        raise TypeError(obj)
+
+    if isinstance(obj, House):
+        if obj.postal_code:
+            postal_code = obj.postal_code
+
+        names.append(get_house_name(obj))
+
+        obj = get_address_object(obj.parent_guid, timeout)
+
     if isinstance(obj, AddressObject):
         while obj:
             if postal_code is None and obj.postal_code:
@@ -231,24 +242,6 @@ def get_full_name(obj, timeout=None):
                 obj = get_address_object(obj.parent_guid, timeout)
             else:
                 break
-
-    elif isinstance(obj, House):
-        address_object = get_address_object(obj.parent_guid, timeout)
-
-        if (
-            postal_code is None and
-            obj.postal_code and
-            not address_object.postal_code
-        ):
-            postal_code = obj.postal_code
-
-        names.extend((
-            get_full_name(address_object, timeout),
-            get_house_name(obj),
-        ))
-
-    else:
-        raise TypeError(obj)
 
     if postal_code is not None:
         names.insert(0, postal_code)
