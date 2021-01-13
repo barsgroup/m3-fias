@@ -146,19 +146,24 @@ Ext.m3.fias.AddressFields = Ext.extend(Ext.Component, {
         this.mon(this.structureNumberField, 'change', this.onStructureChange, this);
 
         if (this.house) {
-            this.houseNumberField.getStore().loadData({
-                total: 1,
-                rows: [this.house]
-            });
-            var record = this.houseNumberField.getStore().getAt(0);
-            this.houseNumberField.selectedRecord = record;
-            this.updateHouse(record);
-            if (this.house.postalCode) {
-                this.zipCodeField.setValue(this.house.postalCode);
-            }
-            if (this.hasFlatField() && !this.flatNumberField.getValue()) {
+
+            function setValue() {
+                this.houseNumberField.getStore().loadData({
+                    total: 1,
+                    rows: [this.house]
+                });
+                var record = this.houseNumberField.getStore().getAt(0);
+                this.houseNumberField.selectedRecord = record;
+                this.updateHouse(record);
+                if (this.house.postalCode) {
+                    this.zipCodeField.setValue(this.house.postalCode);
+                }
+
                 this.updateFullAddress();
+
+                this.houseNumberField.un('render', setValue);
             }
+            this.houseNumberField.on('render', setValue, this);
         }
     },
 
